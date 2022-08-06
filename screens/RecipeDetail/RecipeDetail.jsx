@@ -4,22 +4,27 @@ import {
   SafeAreaView,
   TouchableOpacity,
   Image,
+  ScrollView,
 } from 'react-native';
 import React, { Component } from 'react';
 import CustomIcon from '../../components/CustomIcon/CustomIcon';
 import theme from '../../styles/theme.style';
 import RecipeImage from '../../assets/images/RecipeDetailImage.png';
 import AvatarImage from '../../assets/images/Avatar2.png';
+import IconNoodles from '../../assets/images/Icon-Noodles.png';
 
-export class RecipeDetail extends Component {
-  render() {
-    return (
-      <SafeAreaView
-        style={{
-          flex: 1,
-          backgroundColor: 'white',
-        }}
-      >
+export const RecipeDetail = ({ navigation }) => {
+  function onPress() {
+    return navigation.goBack();
+  }
+  return (
+    <SafeAreaView
+      style={{
+        flex: 1,
+        backgroundColor: 'white',
+      }}
+    >
+      <ScrollView style={{ backgroundColor: 'white' }}>
         <View
           style={{ paddingHorizontal: 20, marginTop: 30, marginBottom: 12 }}
         >
@@ -41,6 +46,7 @@ export class RecipeDetail extends Component {
                 alignItems: 'center',
                 justifyContent: 'center',
               }}
+              onPress={onPress}
             >
               <CustomIcon
                 name='Arrow-Left'
@@ -203,9 +209,75 @@ export class RecipeDetail extends Component {
             </TouchableOpacity>
           </View>
         </View>
-      </SafeAreaView>
-    );
-  }
-}
+        <View style={{ paddingHorizontal: 20, paddingVertical: 12 }}>
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              marginBottom: 4,
+            }}
+          >
+            <Text
+              style={{
+                fontSize: theme.FONT_SIZE_H5,
+                fontFamily: theme.FONT_BOLD,
+                color: theme.NEUTRAL90_COLOR,
+              }}
+            >
+              Ingredients
+            </Text>
+            <Text
+              style={{
+                fontSize: theme.FONT_SIZE_LABEL,
+                fontFamily: theme.FONT_REGULAR,
+                color: theme.NEUTRAL40_COLOR,
+              }}
+            >
+              5 Items
+            </Text>
+          </View>
+          {[1, 2, 3, 4, 5].map((e) => (
+            <View
+              style={{
+                marginTop: 12,
+                borderRadius: 12,
+                backgroundColor: theme.NEUTRAL10_COLOR,
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                paddingHorizontal: 16,
+                paddingVertical: 12,
+              }}
+            >
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Image source={IconNoodles} />
+                <Text
+                  style={{
+                    fontFamily: theme.FONT_BOLD,
+                    fontSize: theme.FONT_SIZE_P,
+                    color: theme.NEUTRAL90_COLOR,
+                    marginLeft: 16,
+                  }}
+                >
+                  Bread
+                </Text>
+              </View>
+              <Text
+                style={{
+                  fontFamily: theme.FONT_REGULAR,
+                  fontSize: theme.FONT_SIZE_LABEL,
+                  color: theme.NEUTRAL40_COLOR,
+                }}
+              >
+                200g
+              </Text>
+            </View>
+          ))}
+        </View>
+      </ScrollView>
+    </SafeAreaView>
+  );
+};
 
 export default RecipeDetail;
