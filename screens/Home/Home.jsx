@@ -32,7 +32,7 @@ const TrendingData = [
   },
 ];
 
-const TrendingItem = ({ title }) => (
+const TrendingItem = ({ title, onPress }) => (
   <View style={styles.item}>
     <View style={styles.video}>
       <Image source={videoImage} style={styles.videoImage} />
@@ -87,6 +87,7 @@ const TrendingItem = ({ title }) => (
             alignItems: 'center',
             justifyContent: 'center',
           }}
+          onPress={onPress}
         >
           <CustomIcon name='Play' size={20} color={theme.NEUTRAL0_COLOR} />
         </TouchableOpacity>
@@ -179,8 +180,13 @@ const RecentItem = () => (
   </View>
 );
 
-const Home = () => {
-  const renderItem = ({ item }) => <TrendingItem title={item.title} />;
+const Home = ({ navigation }) => {
+  function toRecipe() {
+    return navigation.navigate('RecipeDetail');
+  }
+  const renderItem = ({ item }) => (
+    <TrendingItem title={item.title} onPress={toRecipe} />
+  );
   const renderItem2 = ({ item }) => <RecentItem />;
 
   const [text, onChangeText] = React.useState('Hi');

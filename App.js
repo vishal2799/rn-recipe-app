@@ -16,6 +16,7 @@ import CustomIcon from './components/CustomIcon/CustomIcon';
 import OnboardingScreen from './screens/Onboarding/Onboarding';
 import TabsScreen from './components/Tabs/Tabs';
 import HomeScreen from './screens/Home/Home';
+import RecipeDetail from './screens/RecipeDetail/RecipeDetail';
 // function HomeScreen({ navigation }) {
 //   return (
 //     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
@@ -66,6 +67,7 @@ function App() {
       >
         <Stack.Screen name='Onboarding' component={OnboardingScreen} />
         <Stack.Screen name='Tabs' component={TabsScreen} />
+        <Stack.Screen name='RecipeDetail' component={RecipeDetail} />
         {/* <Stack.Screen name='Details' component={DetailsScreen} /> */}
       </Stack.Navigator>
     </NavigationContainer>
