@@ -6,7 +6,6 @@ import {
   ScrollView,
   TouchableOpacity,
   Image,
-  //Animated,
   FlatList,
   StyleSheet,
 } from 'react-native';
@@ -15,20 +14,16 @@ import Animated, {
   interpolateColor,
   useAnimatedStyle,
 } from 'react-native-reanimated';
-import { Tabs, MaterialTabBar } from 'react-native-collapsible-tab-view';
+import { Tabs } from 'react-native-collapsible-tab-view';
 import CustomIcon from '../../components/CustomIcon/CustomIcon';
-import videoImage from '../../assets/images/video.png';
-import trendingPersonImage from '../../assets/images/trendingperson1.png';
-import videoImage2 from '../../assets/images/video2.png';
 import theme from '../../styles/theme.style';
 import AvatarImage from '../../assets/images/Avatar3.png';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 
-const Tab = createMaterialTopTabNavigator();
-
 const HEADER_HEIGHT = 250;
 const DATA = [0, 1, 2, 3, 4];
 const identity = (v) => v + '';
+
 const Header = () => {
   return (
     <View style={{ paddingHorizontal: 20, marginTop: 30, marginBottom: 12 }}>
@@ -253,107 +248,6 @@ function MyTabBar2({
 }
 
 const Example = React.forwardRef(({ emptyContacts, ...props }, ref) => {
-  const tabBar1 = (props) => (
-    <MaterialTabBar
-      {...props}
-      indicatorStyle={{ backgroundColor: 'white' }}
-      style={{ backgroundColor: 'pink' }}
-    />
-  );
-
-  //   function MyTabBar({
-  //     state,
-  //     descriptors,
-  //     navigation,
-  //     position,
-  //     tabNames,
-  //     onTabPress,
-  //     index,
-  //   }) {
-  //     return (
-  //       <View
-  //         style={{
-  //           flexDirection: 'row',
-  //           backgroundColor: 'transparent',
-  //           height: 58,
-  //           paddingHorizontal: 20,
-  //           paddingVertical: 12,
-  //           justifyContent: 'space-between',
-  //         }}
-  //       >
-  //         {tabNames.map((route, index) => {
-  //           //const { options } = descriptors[route.key];
-  //           const label = route;
-
-  //           const isFocused = index === index;
-
-  //           const onPress = () => {
-  //             const event = navigation.emit({
-  //               type: 'tabPress',
-  //               target: route.key,
-  //               canPreventDefault: true,
-  //             });
-
-  //             if (!isFocused && !event.defaultPrevented) {
-  //               // The `merge: true` option makes sure that the params inside the tab screen are preserved
-  //               navigation.navigate({ name: route.name, merge: true });
-  //             }
-  //           };
-
-  //           const onLongPress = () => {
-  //             navigation.emit({
-  //               type: 'tabLongPress',
-  //               target: route.key,
-  //             });
-  //           };
-
-  //           //const inputRange = state.routes.map((_, i) => i);
-  //           //const opacity = position.interpolate({
-  //           //inputRange,
-  //           //outputRange: inputRange.map((i) => (i === index ? 1 : 0)),
-  //           //});
-
-  //           return (
-  //             <TouchableOpacity
-  //               accessibilityRole='button'
-  //               accessibilityState={isFocused ? { selected: true } : {}}
-  //               //accessibilityLabel={options.tabBarAccessibilityLabel}
-  //               //testID={options.tabBarTestID}
-  //               onPress={onTabPress}
-  //               onLongPress={onTabPress}
-  //               style={{
-  //                 backgroundColor: isFocused
-  //                   ? theme.PRIMARY50_COLOR
-  //                   : 'transparent',
-  //                 paddingVertical: 8,
-  //                 paddingHorizontal: 12,
-  //                 width: 160,
-  //                 textAlign: 'center',
-  //                 borderRadius: 10,
-  //               }}
-  //             >
-  //               <Animated.Text
-  //                 style={[
-  //                   {
-  //                     //opacity,
-  //                     fontFamily: theme.FONT_BOLD,
-  //                     fontSize: theme.FONT_SIZE_SMALL,
-  //                     color: isFocused
-  //                       ? theme.NEUTRAL0_COLOR
-  //                       : theme.PRIMARY50_COLOR,
-  //                     textAlign: 'center',
-  //                   },
-  //                 ]}
-  //               >
-  //                 {label}
-  //               </Animated.Text>
-  //             </TouchableOpacity>
-  //           );
-  //         })}
-  //       </View>
-  //     );
-  //   }
-
   const renderItem = React.useCallback(({ index }) => {
     return (
       <View style={[styles.box, index % 2 === 0 ? styles.boxB : styles.boxA]} />
@@ -377,9 +271,7 @@ const Example = React.forwardRef(({ emptyContacts, ...props }, ref) => {
       ref={ref}
       {...props}
       renderHeader={Header}
-      //renderTabBar={(props) => <MyTabBar {...props} />}
       renderTabBar={MyTabBar2}
-      //headerHeight={HEADER_HEIGHT} // optional
     >
       <Tabs.Tab name='Video' label={makeLabel('Video')}>
         <Tabs.FlatList

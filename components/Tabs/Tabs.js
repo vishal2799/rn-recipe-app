@@ -3,10 +3,10 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import CustomIcon from '../CustomIcon/CustomIcon';
 import theme from '../../styles/theme.style';
-import HomeScreen from '../../screens/Home/Home';
+import HomeScreen from '../../screens/Home/Home2';
 import CreateScreen from '../../screens/Create/Create';
 import SavedScreen from '../../screens/Saved/Saved';
-import ProfileScreen from '../../screens/Profile/Profile2';
+import ProfileScreen from '../../screens/Profile/Profile3';
 import NotificationScreen from '../../screens/Notification/Notification';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 

@@ -16,6 +16,7 @@ import videoImage from '../../assets/images/video.png';
 import trendingPersonImage from '../../assets/images/trendingperson1.png';
 import recentImage from '../../assets/images/Recent1.png';
 import avatarImage from '../../assets/images/Avatar.png';
+import popularImage from '../../assets/images/popular1.png';
 
 const TrendingData = [
   {
@@ -180,6 +181,96 @@ const RecentItem = () => (
   </View>
 );
 
+const PopularItem = () => (
+  <View style={{ marginRight: 16 }}>
+    <View
+      style={{
+        position: 'relative',
+        backgroundColor: theme.NEUTRAL10_COLOR,
+        width: 150,
+        height: 176,
+        zIndex: 1,
+        marginTop: 60,
+        borderRadius: 12,
+      }}
+    >
+      <View
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          zIndex: 2,
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        <Text
+          style={{
+            fontFamily: theme.FONT_BOLD,
+            fontSize: theme.FONT_SIZE_LABEL,
+            color: theme.NEUTRAL90_COLOR,
+            textAlign: 'center',
+            paddingHorizontal: 8,
+          }}
+        >
+          Pepper sweetcorn ramen
+        </Text>
+      </View>
+      <View style={{ position: 'absolute', bottom: 12, left: 12 }}>
+        <Text
+          style={{
+            fontFamily: theme.FONT_REGULAR,
+            fontSize: theme.FONT_SIZE_SMALL,
+            color: theme.NEUTRAL30_COLOR,
+          }}
+        >
+          Time
+        </Text>
+        <Text
+          style={{
+            fontFamily: theme.FONT_BOLD,
+            fontSize: theme.FONT_SIZE_SMALL,
+            color: theme.NEUTRAL90_COLOR,
+          }}
+        >
+          10 MINS
+        </Text>
+      </View>
+      <View
+        style={{
+          position: 'absolute',
+          zIndex: 99,
+          borderRadius: 50,
+          top: -60,
+          left: 0,
+          right: 0,
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        <Image source={popularImage} style={{ borderRadius: 55 }} />
+      </View>
+      <View style={{ position: 'absolute', right: 12, bottom: 12 }}>
+        <TouchableOpacity
+          style={{
+            width: 24,
+            height: 24,
+            backgroundColor: theme.NEUTRAL0_COLOR,
+            borderRadius: 24,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <CustomIcon name='Bookmark' size={16} color={theme.NEUTRAL90_COLOR} />
+        </TouchableOpacity>
+      </View>
+    </View>
+  </View>
+);
+
 const Home = ({ navigation }) => {
   function toRecipe() {
     return navigation.navigate('RecipeDetail');
@@ -188,6 +279,8 @@ const Home = ({ navigation }) => {
     <TrendingItem title={item.title} onPress={toRecipe} />
   );
   const renderItem2 = ({ item }) => <RecentItem />;
+
+  const renderItem3 = ({ item }) => <PopularItem />;
 
   const [text, onChangeText] = React.useState('Hi');
   return (
@@ -242,6 +335,20 @@ const Home = ({ navigation }) => {
             <FlatList
               data={TrendingData}
               renderItem={renderItem}
+              keyExtractor={(item) => item.id}
+              horizontal={true}
+              style={{ marginLeft: 20 }}
+            />
+          </View>
+        </View>
+        <View style={[styles.TrendingContainer]}>
+          <View style={styles.TrendingTop}>
+            <Text style={styles.CategoryTitle}>Popular Categories</Text>
+          </View>
+          <View>
+            <FlatList
+              data={TrendingData}
+              renderItem={renderItem3}
               keyExtractor={(item) => item.id}
               horizontal={true}
               style={{ marginLeft: 20 }}
