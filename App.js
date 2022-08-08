@@ -17,6 +17,8 @@ import OnboardingScreen from './screens/Onboarding/Onboarding';
 import TabsScreen from './components/Tabs/Tabs';
 import HomeScreen from './screens/Home/Home';
 import RecipeDetail from './screens/RecipeDetail/RecipeDetail';
+import Signin from './screens/Signin/Signin';
+import Signup from './screens/Signup/Signup';
 // function HomeScreen({ navigation }) {
 //   return (
 //     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
@@ -69,6 +71,8 @@ function App() {
         <Stack.Screen name='Tabs' component={TabsScreen} />
         <Stack.Screen name='RecipeDetail' component={RecipeDetail} />
         {/* <Stack.Screen name='Details' component={DetailsScreen} /> */}
+        <Stack.Screen name='Signup' component={Signup} />
+        <Stack.Screen name='Signin' component={Signin} />
       </Stack.Navigator>
     </NavigationContainer>
   );

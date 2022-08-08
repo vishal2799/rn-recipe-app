@@ -327,8 +327,8 @@ function MyTabs() {
           }}
         >
           <Tab.Screen name='All' component={Video} />
-          <Tab.Screen name='Unread' component={Recipe} />
-          <Tab.Screen name='Read' component={Recipe} />
+          <Tab.Screen name='Unread' component={Video} />
+          <Tab.Screen name='Read' component={Video} />
         </Tab.Navigator>
       </SafeAreaView>
     </>

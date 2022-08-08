@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import React, { Component, useState } from 'react';
 import avatarImage from '../../assets/images/Avatar.png';
+import theme from '../../styles/theme.style';
 
 const listTab = [
   {
@@ -51,6 +52,18 @@ const data = [
     name: 'Luke',
     status: 'Purple',
   },
+  {
+    name: 'Luke1',
+    status: 'Purple',
+  },
+  {
+    name: 'Luke2',
+    status: 'Purple',
+  },
+  {
+    name: 'Luke3',
+    status: 'Purple',
+  },
 ];
 
 export const Home3 = () => {
@@ -89,30 +102,43 @@ export const Home3 = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView style={styles.listTab} horizontal={true}>
-        {listTab.map((e) => (
-          <TouchableOpacity
-            style={[styles.btnTab, status === e.status && styles.btnTabActive]}
-            onPress={() => setStatusFilter(e.status)}
+      <ScrollView>
+        <View>
+          <ScrollView
+            style={styles.listTab}
+            horizontal={true}
+            nestedScrollEnabled={true}
           >
-            <Text
-              style={[
-                styles.textTab,
-                status === e.status && styles.textTabActive,
-              ]}
-            >
-              {e.status}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
+            {listTab.map((e) => (
+              <TouchableOpacity
+                style={[
+                  styles.btnTab,
+                  status === e.status && styles.btnTabActive,
+                ]}
+                onPress={() => setStatusFilter(e.status)}
+              >
+                <Text
+                  style={[
+                    styles.textTab,
+                    status === e.status && styles.textTabActive,
+                  ]}
+                >
+                  {e.status}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        </View>
 
-      <FlatList
-        data={dataList}
-        keyExtractor={(e, i) => i.toString()}
-        renderItem={renderItem}
-        ItemSeparatorComponent={separator}
-      />
+        <FlatList
+          style={{ marginBottom: 90 }}
+          data={dataList}
+          horizontal={true}
+          keyExtractor={(e, i) => i.toString()}
+          renderItem={renderItem}
+          ItemSeparatorComponent={separator}
+        />
+      </ScrollView>
     </SafeAreaView>
   );
 };
@@ -134,19 +160,21 @@ const styles = StyleSheet.create({
   btnTab: {
     width: Dimensions.get('window').width / 3.5,
     flexDirection: 'row',
-    borderWidth: 0.5,
-    borderColor: 'blue',
     padding: 10,
     justifyContent: 'center',
+    borderRadius: 10,
+    marginRight: 8,
   },
   textTab: {
-    fontSize: 14,
+    fontSize: theme.FONT_SIZE_SMALL,
+    fontFamily: theme.FONT_BOLD,
+    color: theme.PRIMARY50_COLOR,
   },
   btnTabActive: {
-    backgroundColor: 'yellow',
+    backgroundColor: theme.PRIMARY50_COLOR,
   },
   textTabActive: {
-    color: 'white',
+    color: theme.NEUTRAL0_COLOR,
   },
   itemContainer: {
     flexDirection: 'row',

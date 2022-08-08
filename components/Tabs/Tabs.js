@@ -3,7 +3,7 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import CustomIcon from '../CustomIcon/CustomIcon';
 import theme from '../../styles/theme.style';
-import HomeScreen from '../../screens/Home/Home3';
+import HomeScreen from '../../screens/Home/Home';
 import CreateScreen from '../../screens/Create/Create';
 import SavedScreen from '../../screens/Saved/Saved';
 import ProfileScreen from '../../screens/Profile/Profile3';

@@ -13,6 +13,7 @@
     "@expo-google-fonts/poppins": "^0.2.2",
     "@expo/vector-icons": "^13.0.0",
     "@react-native-async-storage/async-storage": "~1.17.3",
+    "@react-native-community/checkbox": "^0.5.12",
     "@react-navigation/bottom-tabs": "^6.3.2",
     "@react-navigation/material-top-tabs": "^6.2.2",
     "@react-navigation/native": "^6.0.11",
@@ -35,7 +36,8 @@
     "react-native-tab-view": "^3.1.1",
     "react-native-video": "^5.2.0",
     "react-native-web": "0.17.7",
-    "twrnc": "^3.3.3"
+    "twrnc": "^3.3.3",
+    "expo-checkbox": "~2.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9"

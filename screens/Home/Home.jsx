@@ -7,8 +7,9 @@ import {
   TouchableOpacity,
   FlatList,
   Image,
+  Dimensions,
 } from 'react-native';
-import React from 'react';
+import React, { useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import theme from '../../styles/theme.style';
 import CustomIcon from '../../components/CustomIcon/CustomIcon';
@@ -17,6 +18,59 @@ import trendingPersonImage from '../../assets/images/trendingperson1.png';
 import recentImage from '../../assets/images/Recent1.png';
 import avatarImage from '../../assets/images/Avatar.png';
 import popularImage from '../../assets/images/popular1.png';
+
+const listTab = [
+  {
+    status: 'All',
+  },
+  {
+    status: 'Purple',
+  },
+  {
+    status: 'Green',
+  },
+  {
+    status: 'Green2',
+  },
+  {
+    status: 'Green3',
+  },
+];
+
+const data = [
+  {
+    name: 'Ronaldo',
+    status: 'Green',
+  },
+  {
+    name: 'Kaka',
+    status: 'Green',
+  },
+  {
+    name: 'Messi',
+    status: 'Purple',
+  },
+  {
+    name: 'Mbappe',
+    status: 'Green',
+  },
+  {
+    name: 'Luke',
+    status: 'Purple',
+  },
+  {
+    name: 'Luke1',
+    status: 'Purple',
+  },
+  {
+    name: 'Luke2',
+    status: 'Purple',
+  },
+  {
+    name: 'Luke3',
+    status: 'Purple',
+  },
+];
 
 const TrendingData = [
   {
@@ -272,6 +326,21 @@ const PopularItem = () => (
 );
 
 const Home = ({ navigation }) => {
+  const [status, setStatus] = useState('All');
+  const [dataList, setDataList] = useState(data);
+  const setStatusFilter = (status) => {
+    if (status !== 'All') {
+      setDataList([...data.filter((e) => e.status === status)]);
+    } else {
+      setDataList(data);
+    }
+    setStatus(status);
+  };
+
+  const separator = () => {
+    return <View style={{ height: 1, backgroundColor: '#f1f1f1' }} />;
+  };
+
   function toRecipe() {
     return navigation.navigate('RecipeDetail');
   }
@@ -281,6 +350,24 @@ const Home = ({ navigation }) => {
   const renderItem2 = ({ item }) => <RecentItem />;
 
   const renderItem3 = ({ item }) => <PopularItem />;
+
+  const renderItem5 = ({ item, index }) => {
+    return (
+      <View key={index} style={styles.itemContainer}>
+        <View style={styles.itemLogo}>
+          <Image style={styles.itemImage} source={avatarImage} />
+        </View>
+
+        <View style={styles.itemBody}>
+          <Text style={styles.itemName}>{item.name}</Text>
+        </View>
+
+        <View style={styles.itemStatus}>
+          <Text style={styles.itemName}>{item.status}</Text>
+        </View>
+      </View>
+    );
+  };
 
   const [text, onChangeText] = React.useState('Hi');
   return (
@@ -345,14 +432,48 @@ const Home = ({ navigation }) => {
           <View style={styles.TrendingTop}>
             <Text style={styles.CategoryTitle}>Popular Categories</Text>
           </View>
+          <View style={{ paddingHorizontal: 20 }}>
+            <ScrollView
+              style={styles.listTab}
+              horizontal={true}
+              nestedScrollEnabled={true}
+            >
+              {listTab.map((e) => (
+                <TouchableOpacity
+                  style={[
+                    styles.btnTab,
+                    status === e.status && styles.btnTabActive,
+                  ]}
+                  onPress={() => setStatusFilter(e.status)}
+                >
+                  <Text
+                    style={[
+                      styles.textTab,
+                      status === e.status && styles.textTabActive,
+                    ]}
+                  >
+                    {e.status}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          </View>
           <View>
             <FlatList
+              style={{ marginLeft: 20, marginBottom: 12 }}
+              data={dataList}
+              horizontal={true}
+              keyExtractor={(e, i) => i.toString()}
+              renderItem={renderItem3}
+              ItemSeparatorComponent={separator}
+            />
+            {/* <FlatList
               data={TrendingData}
               renderItem={renderItem3}
               keyExtractor={(item) => item.id}
               horizontal={true}
               style={{ marginLeft: 20 }}
-            />
+            /> */}
           </View>
         </View>
         <View style={[styles.TrendingContainer]}>
@@ -392,8 +513,8 @@ const Home = ({ navigation }) => {
           </View>
         </View>
         <View style={[styles.TrendingContainer, { marginBottom: 120 }]}>
-          <View style={styles.TrendingTop}>
-            <Text style={styles.CategoryTitle}>Recent Recipe</Text>
+          <View style={[styles.TrendingTop, { marginTop: 15 }]}>
+            <Text style={styles.CategoryTitle}>Popular Creators</Text>
             <TouchableOpacity
               style={{
                 flexDirection: 'row',
@@ -426,21 +547,25 @@ const Home = ({ navigation }) => {
           >
             {[1, 2, 3, 4].map((e) => (
               <View>
-                <Image source={avatarImage} />
-                <Text
-                  style={{
-                    color: theme.NEUTRAL90_COLOR,
-                    fontSize: theme.FONT_SIZE_SMALL,
-                    fontFamily: theme.FONT_BOLD,
-                    width: '50%',
-                    textAlign: 'center',
-                    marginLeft: 'auto',
-                    marginRight: 'auto',
-                    marginTop: 8,
-                  }}
+                <TouchableOpacity
+                  onPress={() => navigation.navigate('Profile')}
                 >
-                  Troyan Smith
-                </Text>
+                  <Image source={avatarImage} />
+                  <Text
+                    style={{
+                      color: theme.NEUTRAL90_COLOR,
+                      fontSize: theme.FONT_SIZE_SMALL,
+                      fontFamily: theme.FONT_BOLD,
+                      width: '50%',
+                      textAlign: 'center',
+                      marginLeft: 'auto',
+                      marginRight: 'auto',
+                      marginTop: 8,
+                    }}
+                  >
+                    Troyan Smith
+                  </Text>
+                </TouchableOpacity>
               </View>
             ))}
           </View>
@@ -531,6 +656,56 @@ const styles = StyleSheet.create({
   },
   item: {
     marginRight: 16,
+  },
+  listTab: {
+    flexDirection: 'row',
+    alignSelf: 'center',
+    marginBottom: 20,
+  },
+  btnTab: {
+    width: Dimensions.get('window').width / 3.5,
+    flexDirection: 'row',
+    padding: 10,
+    justifyContent: 'center',
+    borderRadius: 10,
+    marginRight: 8,
+  },
+  textTab: {
+    fontSize: theme.FONT_SIZE_SMALL,
+    fontFamily: theme.FONT_BOLD,
+    color: theme.PRIMARY50_COLOR,
+  },
+  btnTabActive: {
+    backgroundColor: theme.PRIMARY50_COLOR,
+  },
+  textTabActive: {
+    color: theme.NEUTRAL0_COLOR,
+  },
+  itemContainer: {
+    flexDirection: 'row',
+    paddingVertical: 15,
+  },
+  itemLogo: {
+    padding: 15,
+  },
+  itemImage: {
+    width: 50,
+    height: 50,
+  },
+  itemBody: {
+    paddingHorizontal: 15,
+    flex: 1,
+    justifyContent: 'center',
+  },
+  itemName: {
+    fontSize: 14,
+    fontWeight: 'bold',
+  },
+  itemStatus: {
+    backgroundColor: 'pink',
+    paddingHorizontal: 6,
+    justifyContent: 'center',
+    right: 12,
   },
 });
 

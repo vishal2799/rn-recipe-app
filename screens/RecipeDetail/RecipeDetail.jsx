@@ -5,8 +5,11 @@ import {
   TouchableOpacity,
   Image,
   ScrollView,
+  StyleSheet,
+  Modal,
+  Pressable,
 } from 'react-native';
-import React, { Component } from 'react';
+import React, { Component, useState } from 'react';
 import CustomIcon from '../../components/CustomIcon/CustomIcon';
 import theme from '../../styles/theme.style';
 import RecipeImage from '../../assets/images/RecipeDetailImage.png';
@@ -14,6 +17,9 @@ import AvatarImage from '../../assets/images/Avatar2.png';
 import IconNoodles from '../../assets/images/Icon-Noodles.png';
 
 export const RecipeDetail = ({ navigation }) => {
+  const [modalVisible, setModalVisible] = useState(false);
+  const toggleMore = () => setShow((show) => !show);
+
   function onPress() {
     return navigation.goBack();
   }
@@ -26,8 +32,57 @@ export const RecipeDetail = ({ navigation }) => {
     >
       <ScrollView style={{ backgroundColor: 'white' }}>
         <View
-          style={{ paddingHorizontal: 20, marginTop: 30, marginBottom: 12 }}
+          style={{
+            paddingHorizontal: 20,
+            marginTop: 30,
+            marginBottom: 12,
+          }}
         >
+          <Modal
+            animationType='slide'
+            transparent={true}
+            visible={modalVisible}
+            onRequestClose={() => {
+              Alert.alert('Modal has been closed.');
+              setModalVisible(!modalVisible);
+            }}
+          >
+            <View style={styles.centeredView}>
+              <View style={styles.modalView}>
+                <Text style={styles.modalText}>Hello World!</Text>
+                <Pressable
+                  style={[styles.button, styles.buttonClose]}
+                  onPress={() => setModalVisible(!modalVisible)}
+                >
+                  <Text style={styles.textStyle}>Hide Modal</Text>
+                </Pressable>
+              </View>
+            </View>
+          </Modal>
+          <Pressable
+            style={[styles.button, styles.buttonOpen]}
+            onPress={() => setModalVisible(true)}
+          >
+            <Text style={styles.textStyle}>Show Modal</Text>
+          </Pressable>
+
+          {/* {show ? (
+            <View
+              style={{
+                height: 100,
+                width: 100,
+                position: 'absolute',
+                right: 70,
+                top: 50,
+                backgroundColor: 'pink',
+                zIndex: 99,
+              }}
+            >
+              <Text>Hi</Text>
+            </View>
+          ) : (
+            <Text></Text>
+          )} */}
           <View
             style={{
               flexDirection: 'row',
@@ -64,6 +119,7 @@ export const RecipeDetail = ({ navigation }) => {
                 alignItems: 'center',
                 justifyContent: 'center',
               }}
+              onPress={toggleMore}
             >
               <CustomIcon
                 name='More'
@@ -279,5 +335,49 @@ export const RecipeDetail = ({ navigation }) => {
     </SafeAreaView>
   );
 };
+
+const styles = StyleSheet.create({
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 22,
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 35,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  button: {
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+  },
+  buttonOpen: {
+    backgroundColor: '#F194FF',
+  },
+  buttonClose: {
+    backgroundColor: '#2196F3',
+  },
+  textStyle: {
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: 'center',
+  },
+});
 
 export default RecipeDetail;

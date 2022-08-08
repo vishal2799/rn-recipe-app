@@ -21,7 +21,7 @@ const Onboarding = ({ navigation }) => {
     try {
       const value = await AsyncStorage.getItem('hasOnboarded');
       if (value == 'true') {
-        navigation.navigate('Tabs');
+        navigation.navigate('Signin');
       }
     } catch (e) {
       // error reading value
@@ -31,7 +31,7 @@ const Onboarding = ({ navigation }) => {
   const completeOnboarding = async (value) => {
     try {
       await AsyncStorage.setItem('hasOnboarded', 'true');
-      navigation.navigate('Tabs');
+      navigation.navigate('Signin');
     } catch (e) {
       // saving error
       console.log('onboarding error');
