@@ -12,11 +12,9 @@ import {
 import React, { Component, useState } from 'react';
 import CustomIcon from '../../components/CustomIcon/CustomIcon';
 import theme from '../../styles/theme.style';
-import RecipeImage from '../../assets/images/RecipeDetailImage.png';
-import AvatarImage from '../../assets/images/Avatar2.png';
-import IconNoodles from '../../assets/images/Icon-Noodles.png';
 
-export const RecipeDetail = ({ navigation }) => {
+export const RecipeDetail = ({ route, navigation }) => {
+  const { data } = route.params;
   const [modalVisible, setModalVisible] = useState(false);
   const toggleMore = () => setShow((show) => !show);
 
@@ -135,7 +133,7 @@ export const RecipeDetail = ({ navigation }) => {
               color: theme.NEUTRAL90_COLOR,
             }}
           >
-            How to make french toast
+            {data.recipeTitle}
           </Text>
         </View>
         <View
@@ -143,7 +141,7 @@ export const RecipeDetail = ({ navigation }) => {
         >
           <View>
             <Image
-              source={RecipeImage}
+              source={data.recipeImage}
               style={{ width: '100%', borderRadius: 10 }}
             />
             <View
@@ -193,7 +191,7 @@ export const RecipeDetail = ({ navigation }) => {
                 marginLeft: 4,
               }}
             >
-              4, 5
+              {data.rating}
             </Text>
             <Text
               style={{
@@ -202,7 +200,7 @@ export const RecipeDetail = ({ navigation }) => {
                 color: theme.NEUTRAL40_COLOR,
               }}
             >
-              ( 300 Reviews )
+              ( {data.reviews} reviews )
             </Text>
           </View>
           <View
@@ -214,17 +212,33 @@ export const RecipeDetail = ({ navigation }) => {
             }}
           >
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <Image source={AvatarImage} />
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate('Profile', {
+                    id: data.personId,
+                  })
+                }
+              >
+                <Image source={data.personImage} />
+              </TouchableOpacity>
               <View style={{ marginLeft: 10 }}>
-                <Text
-                  style={{
-                    fontSize: theme.FONT_SIZE_P,
-                    fontFamily: theme.FONT_BOLD,
-                    color: theme.NEUTRAL100_COLOR,
-                  }}
+                <TouchableOpacity
+                  onPress={() =>
+                    navigation.navigate('Profile', {
+                      id: data.personId,
+                    })
+                  }
                 >
-                  Roberta Anny
-                </Text>
+                  <Text
+                    style={{
+                      fontSize: theme.FONT_SIZE_P,
+                      fontFamily: theme.FONT_BOLD,
+                      color: theme.NEUTRAL100_COLOR,
+                    }}
+                  >
+                    {data.personName}
+                  </Text>
+                </TouchableOpacity>
                 <View style={{ flexDirection: 'row' }}>
                   <CustomIcon
                     name='Location'
@@ -239,7 +253,7 @@ export const RecipeDetail = ({ navigation }) => {
                       marginLeft: 4,
                     }}
                   >
-                    Bali, Indonesia
+                    {data.personLocation}
                   </Text>
                 </View>
               </View>
@@ -293,7 +307,7 @@ export const RecipeDetail = ({ navigation }) => {
               5 Items
             </Text>
           </View>
-          {[1, 2, 3, 4, 5].map((e) => (
+          {data.ingredients.map((e) => (
             <View
               style={{
                 marginTop: 12,
@@ -307,7 +321,7 @@ export const RecipeDetail = ({ navigation }) => {
               }}
             >
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <Image source={IconNoodles} />
+                <Image source={e.ingredientImage} />
                 <Text
                   style={{
                     fontFamily: theme.FONT_BOLD,
@@ -316,7 +330,7 @@ export const RecipeDetail = ({ navigation }) => {
                     marginLeft: 16,
                   }}
                 >
-                  Bread
+                  {e.name}
                 </Text>
               </View>
               <Text
@@ -326,7 +340,7 @@ export const RecipeDetail = ({ navigation }) => {
                   color: theme.NEUTRAL40_COLOR,
                 }}
               >
-                200g
+                {e.quantity}
               </Text>
             </View>
           ))}
