@@ -91,15 +91,23 @@ const Home = ({ navigation }) => {
           <Text style={styles.Heading}>Find best recipes for cooking</Text>
         </View>
         <View style={styles.SearchContainer}>
-          <View style={styles.SearchFieldContainer}>
-            <CustomIcon name='Search' size={20} color={theme.NEUTRAL20_COLOR} />
-            <TextInput
-              onChangeText={onChangeText}
-              value={text}
-              placeholder='Search recipes'
-              style={styles.SearchField}
-            />
-          </View>
+          <TouchableOpacity onPress={() => navigation.navigate('Search')}>
+            <View style={styles.SearchFieldContainer}>
+              <CustomIcon
+                name='Search'
+                size={20}
+                color={theme.NEUTRAL20_COLOR}
+              />
+              {/* <TextInput
+                onChangeText={onChangeText}
+                value=''
+                placeholder='Search recipes'
+                style={styles.SearchField}
+                disabled={true}
+              /> */}
+              <Text style={styles.SearchField}>Search</Text>
+            </View>
+          </TouchableOpacity>
         </View>
         <View style={styles.TrendingContainer}>
           <View style={styles.TrendingTop}>

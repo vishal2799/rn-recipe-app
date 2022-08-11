@@ -10,6 +10,20 @@ import React from 'react';
 import CustomIcon from '../../components/CustomIcon/CustomIcon';
 import theme from '../../styles/theme.style';
 import { Ionicons } from '@expo/vector-icons';
+import CustomInput from '../../components/CustomInput/CustomInput';
+import * as yup from 'yup';
+import { Formik, Field, useField } from 'formik';
+
+const signUpValidationSchema = yup.object().shape({
+  email: yup
+    .string()
+    .email('Please enter valid email')
+    .required('Email Address is Required'),
+  password: yup
+    .string()
+    .min(8, ({ min }) => `Password must be at least ${min} characters`)
+    .required('Password is required'),
+});
 
 export default function Signin({ navigation }) {
   return (
@@ -34,93 +48,74 @@ export default function Signin({ navigation }) {
           Welcome Back!
         </Text>
       </View>
-      <View style={{ marginTop: 57 }}>
-        <Text
-          style={{
-            fontSize: theme.FONT_SIZE_LABEL,
-            fontFamily: theme.FONT_REGULAR,
-            color: theme.NEUTRAL90_COLOR,
-          }}
-        >
-          Email
-        </Text>
-        <TextInput
-          style={{
-            color: theme.NEUTRAL90_COLOR,
-            fontSize: theme.FONT_SIZE_LABEL,
-            fontFamily: theme.FONT_REGULAR,
-            marginTop: 5,
-            paddingVertical: 12,
-            paddingHorizontal: 16,
-            borderColor: theme.NEUTRAL30_COLOR,
-            borderWidth: 1,
-            borderRadius: 10,
-          }}
-          placeholder='Enter Email'
-        />
-      </View>
-      <View style={{ marginTop: 30 }}>
-        <Text
-          style={{
-            fontSize: theme.FONT_SIZE_LABEL,
-            fontFamily: theme.FONT_REGULAR,
-            color: theme.NEUTRAL90_COLOR,
-          }}
-        >
-          Password
-        </Text>
-        <TextInput
-          style={{
-            color: theme.NEUTRAL90_COLOR,
-            fontSize: theme.FONT_SIZE_LABEL,
-            fontFamily: theme.FONT_REGULAR,
-            marginTop: 5,
-            paddingVertical: 12,
-            paddingHorizontal: 16,
-            borderColor: theme.NEUTRAL30_COLOR,
-            borderWidth: 1,
-            borderRadius: 10,
-          }}
-          placeholder='Enter Password'
-        />
-      </View>
-      <TouchableOpacity>
-        <Text
-          style={{
-            marginTop: 20,
-            color: theme.PRIMARY50_COLOR,
-            fontSize: theme.FONT_SIZE_SMALL,
-            fontFamily: theme.FONT_REGULAR,
-          }}
-        >
-          Forgot Password?
-        </Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={{
-          flexDirection: 'row',
-          alignItems: 'flex-start',
-          justifyContent: 'center',
-          paddingHorizontal: 32,
-          paddingVertical: 16,
-          borderRadius: 10,
-          marginTop: 25,
-          backgroundColor: theme.PRIMARY50_COLOR,
+      <Formik
+        initialValues={{
+          email: '',
+          password: '',
         }}
-        onPress={() => navigation.navigate('Tabs')}
+        onSubmit={(values) => console.log(values)}
+        validationSchema={signUpValidationSchema}
       >
-        <Text
-          style={{
-            color: theme.NEUTRAL0_COLOR,
-            fontSize: theme.FONT_SIZE_LABEL,
-            fontFamily: theme.FONT_BOLD,
-            marginRight: 4,
-          }}
-        >
-          Sign In
-        </Text>
-        <CustomIcon name='Arrow-Right' size={20} color={theme.NEUTRAL0_COLOR} />
-      </TouchableOpacity>
+        {({ handleSubmit, isValid, dirty }) => (
+          <>
+            <Field
+              component={CustomInput}
+              name='email'
+              placeholder='Email Address'
+              keyboardType='email-address'
+            />
+            <Field
+              component={CustomInput}
+              name='password'
+              placeholder='Password'
+              secureTextEntry
+            />
+            <TouchableOpacity>
+              <Text
+                style={{
+                  marginTop: 20,
+                  color: theme.PRIMARY50_COLOR,
+                  fontSize: theme.FONT_SIZE_SMALL,
+                  fontFamily: theme.FONT_REGULAR,
+                }}
+              >
+                Forgot Password?
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={{
+                flexDirection: 'row',
+                alignItems: 'flex-start',
+                justifyContent: 'center',
+                paddingHorizontal: 32,
+                paddingVertical: 16,
+                borderRadius: 10,
+                marginTop: 25,
+                backgroundColor: theme.PRIMARY50_COLOR,
+              }}
+              onPress={() => navigation.navigate('Tabs')}
+              disabled={!(isValid && dirty)}
+            >
+              <Text
+                style={{
+                  color: theme.NEUTRAL0_COLOR,
+                  fontSize: theme.FONT_SIZE_LABEL,
+                  fontFamily: theme.FONT_BOLD,
+                  marginRight: 4,
+                }}
+              >
+                Sign In
+              </Text>
+              <CustomIcon
+                name='Arrow-Right'
+                size={20}
+                color={theme.NEUTRAL0_COLOR}
+              />
+            </TouchableOpacity>
+          </>
+        )}
+      </Formik>
+
       <View
         style={{
           flexDirection: 'row',
