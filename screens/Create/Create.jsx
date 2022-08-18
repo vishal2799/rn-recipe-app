@@ -17,8 +17,10 @@ import { Formik, Form, Field, FieldArray } from 'formik';
 import * as yup from 'yup';
 import * as ImagePicker from 'expo-image-picker';
 import { collection, addDoc, serverTimestamp, doc } from 'firebase/firestore';
-import { db, auth } from '../../config/Firebase/firebaseConfig';
+import { db, storage } from '../../config/Firebase/firebaseConfig';
 import { useAuthentication } from '../../utils/hooks/useAuthentication';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { v4 as uuid } from 'uuid';
 
 const schema = yup.object().shape({
   ingredients: yup
@@ -54,7 +56,7 @@ export const Create = () => {
     }
 
     let pickerResult = await ImagePicker.launchImageLibraryAsync();
-    //console.log(pickerResult);
+    console.log(pickerResult);
 
     if (pickerResult.cancelled === true) {
       return;
@@ -89,6 +91,46 @@ export const Create = () => {
     //   });
 
     const docRef = await addDoc(collection(db, 'recipes'), data);
+
+    const blob = await new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.onload = function () {
+        resolve(xhr.response);
+      };
+      xhr.onerror = function (e) {
+        console.log(e);
+        reject(new TypeError('Network request failed'));
+      };
+      xhr.responseType = 'blob';
+      xhr.open('GET', selectedImage.localUri, true);
+      xhr.send(null);
+    });
+
+    const fileRef = ref(storage, uuid());
+    const result = await uploadBytes(fileRef, blob);
+
+    // We're done with the blob, close and release it
+    blob.close();
+
+    const url = await getDownloadURL(fileRef);
+
+    // const metadata = {
+    //   contentType: 'image/jpeg',
+    // };
+
+    // let filename = selectedImage.localUri.split('/').pop();
+
+    // const imageRef = ref(storage, filename);
+
+    // uploadBytesResumable(imageRef, selectedImage.localUri, metadata).then((snapshot) => {
+    //   console.log('Uploaded a blob or file!');
+    //   console.log('Uploaded', snapshot.totalBytes, 'bytes.');
+    //   getDownloadURL(snapshot.ref).then((url) => {
+    //     console.log('File available at', url);
+    //     // ...
+    //   });
+    // });
+    console.log(url);
     console.log(alert(docRef));
   };
 

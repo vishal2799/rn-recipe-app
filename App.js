@@ -1,5 +1,5 @@
 // In App.js in a new project
-
+import 'react-native-get-random-values';
 import * as React from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { Button, View, Text } from 'react-native';
