@@ -14,7 +14,10 @@ import { Ionicons } from '@expo/vector-icons';
 import Checkbox from 'expo-checkbox';
 import CustomInput from '../../components/CustomInput/CustomInput';
 import * as yup from 'yup';
-import { Formik, Field, useField } from 'formik';
+import { Formik, Field } from 'formik';
+import { auth } from '../../config/Firebase/firebaseConfig';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { doc, collection, setDoc } from 'firebase/firestore';
 
 const signUpValidationSchema = yup.object().shape({
   name: yup
@@ -46,9 +49,56 @@ const signUpValidationSchema = yup.object().shape({
     .oneOf([true], 'You must accept the terms and conditions.'),
 });
 
-export default function Signup({ navigation }) {
+function Signup({ navigation }) {
+  const [err, setErr] = useState(null);
+
+  const onSignUpPress = async (values) => {
+    //console.log(values.name);
+
+    try {
+      await createUserWithEmailAndPassword(auth, values.email, values.password);
+      navigation.navigate('Sign In');
+    } catch (error) {
+      setErr(error.message);
+    }
+
+    // createUserWithEmailAndPassword(auth, values.email, values.password)
+    //   .then((response) => {
+    //     const uid = response.user.uid;
+    //     const data = {
+    //       id: uid,
+    //       email: values.email,
+    //       name: values.name,
+    //     };
+
+    //     setDoc(doc(db, 'users', uid), data)
+    //       .then(() => {
+    //         navigation.navigate('Tabs', { user: data });
+    //       })
+    //       .catch((error) => {
+    //         alert(error);
+    //       });
+    //   })
+    //   .catch((error) => {
+    //     alert(error);
+    //   });
+  };
+
   return (
     <SafeAreaView style={{ flex: 1, paddingHorizontal: 30 }}>
+      {!!err && (
+        <View
+          style={{
+            marginTop: 30,
+            padding: 10,
+            color: '#fff',
+            backgroundColor: '#D54826FF',
+          }}
+        >
+          <Text style={{ color: '#fff' }}>{err}</Text>
+        </View>
+      )}
+
       <View style={{ marginTop: 60, width: '50%' }}>
         <Text
           style={{
@@ -72,14 +122,13 @@ export default function Signup({ navigation }) {
 
       <Formik
         initialValues={{
-          fullName: '',
+          name: '',
           email: '',
-          phoneNumber: '',
           password: '',
           confirmPassword: '',
           check: false,
         }}
-        onSubmit={(values) => console.log(values)}
+        onSubmit={(values) => onSignUpPress(values)}
         validationSchema={signUpValidationSchema}
       >
         {({
@@ -146,7 +195,7 @@ export default function Signup({ navigation }) {
                 marginTop: 25,
                 backgroundColor: theme.PRIMARY50_COLOR,
               }}
-              onPress={() => navigation.navigate('Tabs')}
+              onPress={handleSubmit}
               disabled={!(isValid && dirty)}
             >
               <Text
@@ -270,3 +319,5 @@ const styles = StyleSheet.create({
     color: 'red',
   },
 });
+
+export default Signup;

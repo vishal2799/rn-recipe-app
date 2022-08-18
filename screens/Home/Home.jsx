@@ -7,7 +7,7 @@ import {
   FlatList,
   Image,
 } from 'react-native';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import theme from '../../styles/theme.style';
 import CustomIcon from '../../components/CustomIcon/CustomIcon';
@@ -18,6 +18,12 @@ import VideoRecipe from '../../components/VideoRecipe/VideoRecipe';
 import PopularCard from '../../components/PopularCard/PopularCard';
 import { data, recipeData } from '../../mockData';
 import Creator from '../../components/Creator/Creator';
+import { getAuth, signOut } from 'firebase/auth';
+import { useAuthentication } from '../../utils/hooks/useAuthentication';
+import { auth } from '../../config/Firebase/firebaseConfig';
+import { collection, query, where, getDocs } from 'firebase/firestore';
+import { db } from '../../config/Firebase/firebaseConfig';
+
 const listTab = [
   {
     status: 'All',
@@ -37,6 +43,44 @@ const listTab = [
 ];
 
 const Home = ({ navigation }) => {
+  const { user } = useAuthentication();
+  const [hrecipes, setHrecipes] = useState([]);
+  async function recipefun() {
+    const q = query(
+      collection(db, 'recipes'),
+      where('authorID', '==', user.uid.toString())
+    );
+    const querySnapshot = await getDocs(q);
+    const newRecipes = [];
+    querySnapshot.forEach((doc) => {
+      const recipe = doc.data();
+      newRecipes.push(recipe);
+      console.log(recipe.title);
+    });
+    setHrecipes(newRecipes);
+  }
+  useEffect(() => {
+    recipefun();
+
+    // recipesRef
+    //     .where("authorID", "==", userID)
+    //     .orderBy('createdAt', 'desc')
+    //     .onSnapshot(
+    //         querySnapshot => {
+    //             const newEntities = []
+    //             querySnapshot.forEach(doc => {
+    //                 const entity = doc.data()
+    //                 entity.id = doc.id
+    //                 newEntities.push(entity)
+    //             });
+    //             setEntities(newEntities)
+    //         },
+    //         error => {
+    //             console.log(error)
+    //         }
+    //     )
+  }, []);
+
   const [status, setStatus] = useState('All');
   const [dataList, setDataList] = useState(data);
   const setStatusFilter = (status) => {
@@ -52,9 +96,6 @@ const Home = ({ navigation }) => {
     return <View style={{ height: 1, backgroundColor: '#f1f1f1' }} />;
   };
 
-  function toRecipe() {
-    return navigation.navigate('RecipeDetail');
-  }
   const renderItem = ({ item }) => <VideoRecipe data={item} />;
   const renderRecentItem = ({ item }) => <RecentCard data={item} />;
 
@@ -87,6 +128,11 @@ const Home = ({ navigation }) => {
       }}
     >
       <ScrollView style={{ backgroundColor: 'white' }}>
+        <View>
+          <TouchableOpacity onPress={() => signOut(auth)}>
+            <Text>SignOut</Text>
+          </TouchableOpacity>
+        </View>
         <View style={styles.HeadingContainer}>
           <Text style={styles.Heading}>Find best recipes for cooking</Text>
         </View>

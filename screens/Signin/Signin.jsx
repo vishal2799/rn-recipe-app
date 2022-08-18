@@ -6,15 +6,17 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React from 'react';
+import React, { useState } from 'react';
 import CustomIcon from '../../components/CustomIcon/CustomIcon';
 import theme from '../../styles/theme.style';
 import { Ionicons } from '@expo/vector-icons';
 import CustomInput from '../../components/CustomInput/CustomInput';
 import * as yup from 'yup';
 import { Formik, Field, useField } from 'formik';
+import { db, auth } from '../../config/Firebase/firebaseConfig';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 
-const signUpValidationSchema = yup.object().shape({
+const signInValidationSchema = yup.object().shape({
   email: yup
     .string()
     .email('Please enter valid email')
@@ -26,8 +28,55 @@ const signUpValidationSchema = yup.object().shape({
 });
 
 export default function Signin({ navigation }) {
+  const [err, setErr] = useState(null);
+  const onSignInPress = async (values) => {
+    try {
+      await signInWithEmailAndPassword(auth, values.email, values.password);
+    } catch (error) {
+      setErr(error.message);
+    }
+    // signInWithEmailAndPassword(auth, values.email, values.password)
+    //   .then((response) => {
+    //     navigation.navigate('Tabs');
+
+    //     // Signed in
+    //     // const userId = response.user.uid;
+    //     // const docRef = doc(db, 'users', userId);
+    //     // getDoc(docRef)
+    //     //   .then((docSnap) => {
+    //     //     if (!docSnap.exists()) {
+    //     //       alert('User does not exist anymore.');
+    //     //       return;
+    //     //     } else {
+    //     //       alert('Not working');
+    //     //       const user = docSnap.data();
+    //     //       navigation.navigate('Tabs', { user });
+    //     //     }
+    //     //   })
+    //     //   .catch((err) => {
+    //     //     alert(err);
+    //     //   });
+    //   })
+    //   .catch((error) => {
+    //     const errorCode = error.code;
+    //     const errorMessage = error.message;
+    //   });
+  };
   return (
     <SafeAreaView style={{ flex: 1, paddingHorizontal: 30 }}>
+      {!!err && (
+        <View
+          style={{
+            marginTop: 30,
+            padding: 10,
+            color: '#fff',
+            backgroundColor: '#D54826FF',
+          }}
+        >
+          <Text style={{ color: '#fff' }}>{err}</Text>
+        </View>
+      )}
+
       <View style={{ marginTop: 94 }}>
         <Text
           style={{
@@ -53,8 +102,8 @@ export default function Signin({ navigation }) {
           email: '',
           password: '',
         }}
-        onSubmit={(values) => console.log(values)}
-        validationSchema={signUpValidationSchema}
+        onSubmit={(values) => onSignInPress(values)}
+        validationSchema={signInValidationSchema}
       >
         {({ handleSubmit, isValid, dirty }) => (
           <>
@@ -93,8 +142,9 @@ export default function Signin({ navigation }) {
                 marginTop: 25,
                 backgroundColor: theme.PRIMARY50_COLOR,
               }}
-              onPress={() => navigation.navigate('Tabs')}
+              onPress={handleSubmit}
               disabled={!(isValid && dirty)}
+              // activate this later disabled={!(isValid && dirty)}
             >
               <Text
                 style={{

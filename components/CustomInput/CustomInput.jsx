@@ -25,7 +25,11 @@ const CustomInput = (props) => {
           {name}
         </Text>
         <TextInput
-          style={[styles.textInput, hasError && styles.errorInput]}
+          style={[
+            styles.textInput,
+            props.multiline && { height: props.numberOfLines * 40 },
+            hasError && styles.errorInput,
+          ]}
           value={value}
           onChangeText={(text) => onChange(name)(text)}
           onBlur={() => {

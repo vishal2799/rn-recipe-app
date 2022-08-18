@@ -18,40 +18,44 @@ import TabsScreen from './components/Tabs/Tabs';
 import HomeScreen from './screens/Home/Home';
 import RecipeDetail from './screens/RecipeDetail/RecipeDetail';
 import Signin from './screens/Signin/Signin';
-import Login from './screens/Signin/Signin';
 import Signup from './screens/Signup/Signup';
 import Search from './screens/Search/Search';
-// function HomeScreen({ navigation }) {
-//   return (
-//     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-//       <Text style={tw`text-red-500`}>Home Screen</Text>
-//       <Text style={{ fontFamily: 'Poppins_400Regular' }}>First Screen</Text>
-//       <Button
-//         title='Go to Details'
-//         onPress={() => navigation.navigate('Details')}
-//       />
-//       <CustomIcon name='Clock' size={30} />
-//     </View>
-//   );
-// }
-
-function DetailsScreen({ navigation }) {
-  return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Text>Details Screen</Text>
-      <Button
-        title='Go to Details... again'
-        onPress={() => navigation.push('Details')}
-      />
-      <Button title='Go to Home' onPress={() => navigation.navigate('Home')} />
-      <Button title='Go back' onPress={() => navigation.goBack()} />
-    </View>
-  );
+import RootNavigation from './navigation/index';
+import { decode, encode } from 'base-64';
+if (!global.btoa) {
+  global.btoa = encode;
+}
+if (!global.atob) {
+  global.atob = decode;
 }
 
 const Stack = createNativeStackNavigator();
 
 function App() {
+  // const [loading, setLoading] = React.useState(true);
+  // const [user, setUser] = React.useState(null);
+
+  // useEffect(() => {
+  //       const docRef = doc(db, 'users', userId);
+  //       firebase.auth().onAuthStateChanged(user => {
+  //     if (user) {
+  //       usersRef
+  //         .doc(user.uid)
+  //         .get()
+  //         .then((document) => {
+  //           const userData = document.data()
+  //           setLoading(false)
+  //           setUser(userData)
+  //         })
+  //         .catch((error) => {
+  //           setLoading(false)
+  //         });
+  //     } else {
+  //       setLoading(false)
+  //     }
+  //   });
+  // }, []);
+
   let [fontsLoaded] = useFonts({
     Poppins_400Regular,
     Poppins_700Bold,
@@ -62,22 +66,35 @@ function App() {
     return <AppLoading />;
   }
   return (
-    <NavigationContainer>
-      <Stack.Navigator
-        initialRouteName='Signin'
-        screenOptions={{
-          headerShown: false,
-        }}
-      >
-        <Stack.Screen name='Onboarding' component={OnboardingScreen} />
-        <Stack.Screen name='Tabs' component={TabsScreen} />
-        <Stack.Screen name='RecipeDetail' component={RecipeDetail} />
-        <Stack.Screen name='Search' component={Search} />
-        {/* <Stack.Screen name='Details' component={DetailsScreen} /> */}
-        <Stack.Screen name='Signup' component={Signup} />
-        <Stack.Screen name='Signin' component={Login} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <RootNavigation />
+    // <NavigationContainer>
+    //   <Stack.Navigator
+    //     screenOptions={{
+    //       headerShown: false,
+    //     }}
+    //   >
+    //     {user ? (
+    //       <>
+    //         <Stack.Screen name='Onboarding' component={OnboardingScreen} />
+    //         <Stack.Screen
+    //           name='Tabs'
+    //           component={TabsScreen}
+    //           //initialParams={{ user: user }}
+    //         />
+    //         {/* {(props) => <TabsScreen {...props} extraData={user} />} */}
+    //         {/* </Stack.Screen> */}
+    //         <Stack.Screen name='RecipeDetail' component={RecipeDetail} />
+    //         <Stack.Screen name='Search' component={Search} />
+    //       </>
+    //     ) : (
+    //       <>
+    //         {/* <Stack.Screen name='Details' component={DetailsScreen} /> */}
+    //         <Stack.Screen name='Signup' component={Signup} />
+    //         <Stack.Screen name='Signin' component={Signin} />
+    //       </>
+    //     )}
+    //   </Stack.Navigator>
+    // </NavigationContainer>
   );
 }
 

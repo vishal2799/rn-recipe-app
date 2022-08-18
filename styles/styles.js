@@ -86,6 +86,7 @@ export default StyleSheet.create({
   video2: {
     position: 'relative',
     width: '100%',
+    minWidth: 300,
     height: 200,
     marginBottom: 20,
   },
