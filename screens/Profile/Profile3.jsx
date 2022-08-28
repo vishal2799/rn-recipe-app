@@ -275,6 +275,10 @@ const Example = React.forwardRef(({ emptyContacts, ...props }, ref) => {
   const [loading, setLoading] = useState(false);
   const [hrecipes, setHrecipes] = useState([]);
 
+  const renderItem = ({ item }) => <VideoRecipe data={item} />;
+
+  const renderItem1 = ({ item }) => <ImageRecipe data={item} />;
+
   const { user } = useAuthentication();
 
   async function recipefun() {
@@ -313,11 +317,11 @@ const Example = React.forwardRef(({ emptyContacts, ...props }, ref) => {
     profileData();
   }, []);
 
-  const renderItem = React.useCallback(({ index }) => {
-    return (
-      <View style={[styles.box, index % 2 === 0 ? styles.boxB : styles.boxA]} />
-    );
-  }, []);
+  // const renderItem1 = React.useCallback(({ index }) => {
+  //   return (
+  //     <View style={[styles.box, index % 2 === 0 ? styles.boxB : styles.boxA]} />
+  //   );
+  // }, []);
 
   const makeLabel = useCallback(
     (label) => (props) =>
@@ -349,8 +353,8 @@ const Example = React.forwardRef(({ emptyContacts, ...props }, ref) => {
       >
         <Tabs.Tab name='Video' label={makeLabel('Video')}>
           <Tabs.FlatList
-            data={recipeData2}
-            renderItem={VideoRecipe}
+            data={hrecipes.filter((e) => e.type === 'video')}
+            renderItem={renderItem}
             keyExtractor={identity}
             style={{ paddingHorizontal: 20, marginTop: 20, marginBottom: 110 }}
           />
@@ -361,8 +365,8 @@ const Example = React.forwardRef(({ emptyContacts, ...props }, ref) => {
           <View style={[styles.box, styles.boxB]} />
         </Tabs.ScrollView> */}
           <Tabs.FlatList
-            data={recipeData}
-            renderItem={ImageRecipe}
+            data={hrecipes.filter((e) => e.type === 'recipe')}
+            renderItem={renderItem1}
             keyExtractor={identity}
             style={{ paddingHorizontal: 20, marginTop: 20, marginBottom: 20 }}
           />

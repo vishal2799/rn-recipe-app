@@ -5,11 +5,14 @@ import CustomIcon from '../CustomIcon/CustomIcon';
 import styles from '../../styles/styles';
 import videoImage2 from '../../assets/images/video2.png';
 
-const ImageRecipe = () => {
+const ImageRecipe = ({ data }) => {
   return (
     <View style={styles.item2}>
       <View style={styles.video2}>
-        <Image source={videoImage2} style={styles.videoImage} />
+        <Image
+          source={{ uri: data.imageUrl }}
+          style={{ width: 200, height: 200 }}
+        />
         <View style={styles.details}>
           <Text
             style={{
@@ -18,7 +21,7 @@ const ImageRecipe = () => {
               color: theme.NEUTRAL0_COLOR,
             }}
           >
-            How to make Italian Spaghetti at home
+            {data.title}
           </Text>
           <Text
             style={{
@@ -27,7 +30,7 @@ const ImageRecipe = () => {
               color: theme.NEUTRAL0_COLOR,
             }}
           >
-            12 Ingredients | 40 min
+            {data.ingredients.length} Ingredients | {data.cookTime} min
           </Text>
         </View>
         <View style={styles.rating}>
