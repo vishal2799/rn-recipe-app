@@ -1,11 +1,15 @@
-import React from 'react';
-import { onAuthStateChanged, User } from 'firebase/auth';
+import React, { useState } from 'react';
+import { onAuthStateChanged, getAuth } from 'firebase/auth';
 import { auth } from '../../config/Firebase/firebaseConfig';
 
 export function useAuthentication() {
-  const [user, setUser] = React.useState(User);
+  const auth = getAuth();
+  const User = auth.currentUser;
+  const [user, setUser] = useState(User);
+  const [isLoading, setIsLoading] = React.useState(false);
 
   React.useEffect(() => {
+    setIsLoading(true);
     const unsubscribeFromAuthStatuChanged = onAuthStateChanged(auth, (user) => {
       if (user) {
         // User is signed in, see docs for a list of available properties
@@ -15,6 +19,7 @@ export function useAuthentication() {
         // User is signed out
         setUser(undefined);
       }
+      setIsLoading(false);
     });
 
     return unsubscribeFromAuthStatuChanged;
@@ -22,5 +27,6 @@ export function useAuthentication() {
 
   return {
     user,
+    isLoading,
   };
 }

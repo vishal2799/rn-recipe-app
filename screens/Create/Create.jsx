@@ -8,7 +8,7 @@ import {
   StyleSheet,
   TextInput,
 } from 'react-native';
-import React, { Component, useState } from 'react';
+import React, { Component, useState, useEffect } from 'react';
 import CustomIcon from '../../components/CustomIcon/CustomIcon';
 import theme from '../../styles/theme.style';
 import RecipeImage from '../../assets/images/create.png';
@@ -16,11 +16,19 @@ import CustomInput from '../../components/CustomInput/CustomInput';
 import { Formik, Form, Field, FieldArray } from 'formik';
 import * as yup from 'yup';
 import * as ImagePicker from 'expo-image-picker';
-import { collection, addDoc, serverTimestamp, doc } from 'firebase/firestore';
+import {
+  collection,
+  addDoc,
+  serverTimestamp,
+  query,
+  getDocs,
+} from 'firebase/firestore';
 import { db, storage } from '../../config/Firebase/firebaseConfig';
 import { useAuthentication } from '../../utils/hooks/useAuthentication';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { v4 as uuid } from 'uuid';
+import { Picker } from '@react-native-picker/picker';
+import NumericInput from 'react-native-numeric-input';
 
 const schema = yup.object().shape({
   ingredients: yup
@@ -37,10 +45,35 @@ const schema = yup.object().shape({
     .string()
     //.matches(/(\w.+\s).+/, 'Enter at least 2 names')
     .required('Name is required'),
+  serves: yup
+    .number()
+    //.matches(/(\w.+\s).+/, 'Enter at least 2 names')
+    .required('Serves is required'),
+  cookTime: yup
+    .number()
+    //.matches(/(\w.+\s).+/, 'Enter at least 2 names')
+    .required('Cook time is required'),
 });
 
 export const Create = () => {
   const { user } = useAuthentication();
+  const [categories, setCategories] = useState([]);
+
+  async function fetchCategories() {
+    const q = query(collection(db, 'categories'));
+    const querySnapshot = await getDocs(q);
+    const newCategories = [];
+    querySnapshot.forEach((doc) => {
+      const category = doc.data();
+      newCategories.push(category);
+      console.log(category.name);
+    });
+    setCategories(newCategories);
+  }
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
 
   const [entities, setEntities] = useState([]);
 
@@ -66,17 +99,9 @@ export const Create = () => {
   };
 
   const onSave = async (values) => {
-    alert(values.ingredients);
-    console.log(values);
-    const data = {
-      title: values.title,
-      ingredients: values.ingredients,
-      imageUrl: 'www.google.com',
-      cookTime: '30',
-      serves: '4',
-      authorID: user.uid,
-      createdAt: serverTimestamp(),
-    };
+    //alert(values.ingredients);
+    //console.log(values);
+
     // const docRef = doc(db, 'recipes');
 
     // docRef
@@ -89,8 +114,6 @@ export const Create = () => {
     //   .catch((error) => {
     //     alert(error);
     //   });
-
-    const docRef = await addDoc(collection(db, 'recipes'), data);
 
     const blob = await new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
@@ -113,6 +136,20 @@ export const Create = () => {
     blob.close();
 
     const url = await getDownloadURL(fileRef);
+
+    const data = {
+      title: values.title,
+      ingredients: values.ingredients,
+      imageUrl: url,
+      cookTime: values.cookTime,
+      serves: values.serves,
+      authorID: user.uid,
+      type: values.type,
+      category: values.categories,
+      createdAt: serverTimestamp(),
+    };
+
+    const docRef = await addDoc(collection(db, 'recipes'), data);
 
     // const metadata = {
     //   contentType: 'image/jpeg',
@@ -218,7 +255,14 @@ export const Create = () => {
           style={{ paddingHorizontal: 20, paddingBottom: 14, paddingTop: 12 }}
         >
           <Formik
-            initialValues={{ ingredients: [{ name: '', quantity: '' }] }}
+            initialValues={{
+              ingredients: [{ name: '', quantity: '' }],
+              title: '',
+              type: 'video',
+              categories: 'All',
+              serves: 0,
+              cookTime: 0,
+            }}
             validationSchema={schema}
             onSubmit={(values) => onSave(values)}
           >
@@ -231,8 +275,14 @@ export const Create = () => {
               handleSubmit,
               isValid,
               dirty,
+              setFieldValue,
             }) => (
               <View>
+                {/* <Field as='select' name='color'>
+                  <option value='red'>Red</option>
+                  <option value='green'>Green</option>
+                  <option value='blue'>Blue</option>
+                </Field> */}
                 {/* <View>
                   <TouchableOpacity
                     onPress={openImagePickerAsync}
@@ -323,7 +373,7 @@ export const Create = () => {
                 {errors.title && touched.title && (
                   <Text style={styles.errorText}>{errors.title}</Text>
                 )}
-                {[1, 2].map((e) => (
+                <View>
                   <View
                     style={{
                       marginTop: 12,
@@ -357,13 +407,13 @@ export const Create = () => {
                           marginLeft: 16,
                         }}
                       >
-                        Bread
+                        Serves
                       </Text>
                     </View>
                     <View
                       style={{ flexDirection: 'row', alignItems: 'center' }}
                     >
-                      <Text
+                      {/* <Text
                         style={{
                           fontFamily: theme.FONT_REGULAR,
                           fontSize: theme.FONT_SIZE_LABEL,
@@ -372,8 +422,17 @@ export const Create = () => {
                         }}
                       >
                         1
-                      </Text>
-                      <TouchableOpacity>
+                      </Text> */}
+                      <NumericInput
+                        step={1}
+                        minValue={0}
+                        //onChange={handleChange('serves')}
+                        onChange={(v) => {
+                          setFieldValue('serves', v);
+                        }}
+                        value={values.serves}
+                      />
+                      <TouchableOpacity style={{ marginLeft: 10 }}>
                         <CustomIcon
                           name='Arrow-Right'
                           size={24}
@@ -381,8 +440,100 @@ export const Create = () => {
                         />
                       </TouchableOpacity>
                     </View>
+                    {errors.serves && touched.serves && (
+                      <Text style={styles.errorText}>{errors.serves}</Text>
+                    )}
                   </View>
-                ))}
+                  <View
+                    style={{
+                      marginTop: 12,
+                      borderRadius: 12,
+                      backgroundColor: theme.NEUTRAL10_COLOR,
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      paddingHorizontal: 16,
+                      paddingVertical: 12,
+                    }}
+                  >
+                    <View
+                      style={{ flexDirection: 'row', alignItems: 'center' }}
+                    >
+                      <CustomIcon
+                        name='Clock'
+                        size={20}
+                        color={theme.PRIMARY50_COLOR}
+                        style={{
+                          padding: 8,
+                          backgroundColor: theme.NEUTRAL0_COLOR,
+                          borderRadius: 10,
+                        }}
+                      />
+                      <Text
+                        style={{
+                          fontFamily: theme.FONT_BOLD,
+                          fontSize: theme.FONT_SIZE_P,
+                          color: theme.NEUTRAL90_COLOR,
+                          marginLeft: 16,
+                        }}
+                      >
+                        Cook time
+                      </Text>
+                    </View>
+                    <View
+                      style={{ flexDirection: 'row', alignItems: 'center' }}
+                    >
+                      {/* <Text
+                        style={{
+                          fontFamily: theme.FONT_REGULAR,
+                          fontSize: theme.FONT_SIZE_LABEL,
+                          color: theme.NEUTRAL40_COLOR,
+                          marginRight: 8,
+                        }}
+                      >
+                        1
+                      </Text> */}
+                      <NumericInput
+                        step={10}
+                        minValue={0}
+                        //onChange={handleChange('serves')}
+                        onChange={(v) => {
+                          setFieldValue('cookTime', v);
+                        }}
+                        value={values.cookTime}
+                      />
+                      <TouchableOpacity style={{ marginLeft: 10 }}>
+                        <CustomIcon
+                          name='Arrow-Right'
+                          size={24}
+                          color={theme.NEUTRAL100_COLOR}
+                        />
+                      </TouchableOpacity>
+                    </View>
+                    {errors.cookTime && touched.cookTime && (
+                      <Text style={styles.errorText}>{errors.cookTime}</Text>
+                    )}
+                  </View>
+                </View>
+                <View style={styles.SearchContainer}>
+                  <Picker
+                    selectedValue={values.type}
+                    onValueChange={handleChange('type')}
+                  >
+                    <Picker.Item label='Video' value='video' />
+                    <Picker.Item label='Recipe' value='recipe' />
+                  </Picker>
+                </View>
+                <View style={styles.SearchContainer}>
+                  <Picker
+                    selectedValue={values.categories}
+                    onValueChange={handleChange('categories')}
+                  >
+                    {categories.map((e) => (
+                      <Picker.Item label={e.name} value={e.name} />
+                    ))}
+                  </Picker>
+                </View>
                 <View
                   style={{
                     paddingBottom: 14,

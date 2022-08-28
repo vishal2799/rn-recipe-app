@@ -110,6 +110,114 @@ const recipeData = [
   },
 ];
 
+const recipeData2 = [
+  {
+    id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
+    recipeTitle: 'How to make french toast',
+    personId: '1',
+    personName: 'Niki Samantha',
+    personImage: avatarImage,
+    personLocation: 'Bali, Indonesia',
+    recipeImage: recipeImg,
+    rating: '4,5',
+    reviews: '300',
+    serves: '2',
+    cookTime: '45:20',
+    ingredients: [
+      {
+        name: 'Bread',
+        quantity: '200g',
+        ingredientImage: IngredientImage,
+      },
+      {
+        name: 'Vanilla',
+        quantity: '200g',
+        ingredientImage: IngredientImage,
+      },
+      {
+        name: 'Eggs',
+        quantity: '200g',
+        ingredientImage: IngredientImage,
+      },
+      {
+        name: 'Bacon',
+        quantity: '200g',
+        ingredientImage: IngredientImage,
+      },
+    ],
+  },
+  {
+    id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28bb',
+    recipeTitle: 'How to make french toast',
+    personId: '1',
+    personImage: avatarImage,
+    personName: 'Niki Samantha',
+    personLocation: 'Bali, Indonesia',
+    recipeImage: recipeImg,
+    rating: '4,5',
+    reviews: '300',
+    serves: '2',
+    cookTime: '45:10',
+    ingredients: [
+      {
+        name: 'Bread',
+        quantity: '200g',
+        ingredientImage: IngredientImage,
+      },
+      {
+        name: 'Vanilla',
+        quantity: '200g',
+        ingredientImage: IngredientImage,
+      },
+      {
+        name: 'Eggs',
+        quantity: '200g',
+        ingredientImage: IngredientImage,
+      },
+      {
+        name: 'Bacon',
+        quantity: '200g',
+        ingredientImage: IngredientImage,
+      },
+    ],
+  },
+  {
+    id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28bc',
+    recipeTitle: 'How to make french toast',
+    personId: '1',
+    personName: 'Niki Samantha',
+    personImage: avatarImage,
+    personLocation: 'Bali, Indonesia',
+    recipeImage: recipeImg,
+    rating: '4,5',
+    reviews: '300',
+    serves: '2',
+    cookTime: '45:20',
+    ingredients: [
+      {
+        name: 'Bread',
+        quantity: '200g',
+        ingredientImage: IngredientImage,
+      },
+      {
+        name: 'Vanilla',
+        quantity: '200g',
+        ingredientImage: IngredientImage,
+      },
+      {
+        name: 'Eggs',
+        quantity: '200g',
+        ingredientImage: IngredientImage,
+      },
+      {
+        name: 'Bacon',
+        quantity: '200g',
+        ingredientImage: IngredientImage,
+      },
+    ],
+  },
+];
+
 const data = [
   {
     name: 'Ronaldo',
@@ -145,4 +253,4 @@ const data = [
   },
 ];
 
-export { recipeData, data };
+export { recipeData, data, recipeData2 };

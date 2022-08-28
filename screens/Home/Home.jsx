@@ -21,7 +21,14 @@ import Creator from '../../components/Creator/Creator';
 import { getAuth, signOut } from 'firebase/auth';
 import { useAuthentication } from '../../utils/hooks/useAuthentication';
 import { auth } from '../../config/Firebase/firebaseConfig';
-import { collection, query, where, getDocs } from 'firebase/firestore';
+import {
+  collection,
+  query,
+  where,
+  getDocs,
+  getDoc,
+  doc,
+} from 'firebase/firestore';
 import { db } from '../../config/Firebase/firebaseConfig';
 
 const listTab = [
@@ -45,10 +52,28 @@ const listTab = [
 const Home = ({ navigation }) => {
   const { user } = useAuthentication();
   const [hrecipes, setHrecipes] = useState([]);
+  const [categoriesList, setCategoriesList] = useState([]);
+
+  async function fetchCategories() {
+    const q = query(collection(db, 'categories'));
+    const querySnapshot = await getDocs(q);
+    const newCategories = [];
+    querySnapshot.forEach((doc) => {
+      const category = doc.data();
+      newCategories.push(category);
+      console.log(category.name);
+    });
+    setCategoriesList(newCategories);
+  }
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
   async function recipefun() {
     const q = query(
       collection(db, 'recipes'),
-      where('authorID', '==', user.uid.toString())
+      where('authorID', '==', user.uid)
     );
     const querySnapshot = await getDocs(q);
     const newRecipes = [];
@@ -81,15 +106,15 @@ const Home = ({ navigation }) => {
     //     )
   }, []);
 
-  const [status, setStatus] = useState('All');
-  const [dataList, setDataList] = useState(data);
-  const setStatusFilter = (status) => {
-    if (status !== 'All') {
-      setDataList([...data.filter((e) => e.status === status)]);
+  const [category, setCategory] = useState('All');
+  const [dataList, setDataList] = useState(hrecipes);
+  const setCategoryFilter = (category) => {
+    if (category !== 'All') {
+      setDataList([...hrecipes.filter((e) => e.category === category)]);
     } else {
-      setDataList(data);
+      setDataList(hrecipes);
     }
-    setStatus(status);
+    setCategory(category);
   };
 
   const separator = () => {
@@ -201,21 +226,21 @@ const Home = ({ navigation }) => {
               horizontal={true}
               nestedScrollEnabled={true}
             >
-              {listTab.map((e) => (
+              {categoriesList.map((e) => (
                 <TouchableOpacity
                   style={[
                     styles.btnTab,
-                    status === e.status && styles.btnTabActive,
+                    category === e.name && styles.btnTabActive,
                   ]}
-                  onPress={() => setStatusFilter(e.status)}
+                  onPress={() => setCategoryFilter(e.name)}
                 >
                   <Text
                     style={[
                       styles.textTab,
-                      status === e.status && styles.textTabActive,
+                      category === e.name && styles.textTabActive,
                     ]}
                   >
-                    {e.status}
+                    {e.name}
                   </Text>
                 </TouchableOpacity>
               ))}

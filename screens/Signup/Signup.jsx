@@ -15,9 +15,9 @@ import Checkbox from 'expo-checkbox';
 import CustomInput from '../../components/CustomInput/CustomInput';
 import * as yup from 'yup';
 import { Formik, Field } from 'formik';
-import { auth } from '../../config/Firebase/firebaseConfig';
+import { auth, db } from '../../config/Firebase/firebaseConfig';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { doc, collection, setDoc } from 'firebase/firestore';
+import { doc, collection, setDoc, addDoc } from 'firebase/firestore';
 
 const signUpValidationSchema = yup.object().shape({
   name: yup
@@ -53,14 +53,39 @@ function Signup({ navigation }) {
   const [err, setErr] = useState(null);
 
   const onSignUpPress = async (values) => {
-    //console.log(values.name);
+    createUserWithEmailAndPassword(auth, values.email, values.password)
+      .then((userCredential) => {
+        const data = {
+          name: values.name,
+          email: values.email,
+          followers: [],
+          following: [],
+          profilePhotoUrl:
+            'https://firebasestorage.googleapis.com/v0/b/recipe-app-dd983.appspot.com/o/avatar.jpeg?alt=media&token=e671eb67-d312-4628-aabd-52f65948af01',
+          location: '',
+          bio: '',
+          saved: [],
+          recipes: [],
+          videos: [],
+          authorId: userCredential.user.uid,
+        };
+        addDoc(collection(db, 'users'), data)
+          .then((user) => {
+            console.log(user);
+            navigation.navigate('Sign In');
+          })
+          .catch((err) => console.log(err.message));
+      })
+      .catch((err) => {
+        setErr(err.message);
+      });
 
-    try {
-      await createUserWithEmailAndPassword(auth, values.email, values.password);
-      navigation.navigate('Sign In');
-    } catch (error) {
-      setErr(error.message);
-    }
+    // try {
+    //   await createUserWithEmailAndPassword(auth, values.email, values.password);
+    //   navigation.navigate('Sign In');
+    // } catch (error) {
+    //   setErr(error.message);
+    // }
 
     // createUserWithEmailAndPassword(auth, values.email, values.password)
     //   .then((response) => {

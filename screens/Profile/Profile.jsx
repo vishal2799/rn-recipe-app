@@ -8,8 +8,9 @@ import {
   Animated,
   FlatList,
   StyleSheet,
+  Alert,
 } from 'react-native';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import CustomIcon from '../../components/CustomIcon/CustomIcon';
 import videoImage from '../../assets/images/video.png';
 import trendingPersonImage from '../../assets/images/trendingperson1.png';
@@ -17,7 +18,9 @@ import videoImage2 from '../../assets/images/video2.png';
 import theme from '../../styles/theme.style';
 import AvatarImage from '../../assets/images/Avatar3.png';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-
+import { useAuthentication } from '../../utils/hooks/useAuthentication';
+import { db } from '../../config/Firebase/firebaseConfig';
+import { doc, getDoc } from 'firebase/firestore';
 const Tab = createMaterialTopTabNavigator();
 
 const TrendingData = [
@@ -240,7 +243,11 @@ function Recipe() {
   );
 }
 
-const Profile = () => {
+const Profile = ({ route, navigation }) => {
+  const { user } = useAuthentication();
+  const [profile, setProfile] = useState(null);
+  const [loading, setLoading] = useState(false);
+
   function MyTabBar({ state, descriptors, navigation, position }) {
     return (
       <View
@@ -331,140 +338,158 @@ const Profile = () => {
     );
   }
 
-  return (
-    <>
-      <View style={{ paddingHorizontal: 20, marginTop: 30, marginBottom: 12 }}>
+  let profileLayout;
+  if (loading) {
+    profileLayout = (
+      <View style={{ marginTop: 50 }}>
+        <Text>Loading..</Text>
+      </View>
+    );
+  } else {
+    profileLayout = (
+      <>
         <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginBottom: 16,
-          }}
+          style={{ paddingHorizontal: 20, marginTop: 30, marginBottom: 12 }}
         >
-          <Text
-            style={{
-              color: theme.NEUTRAL100_COLOR,
-              fontFamily: theme.FONT_BOLD,
-              fontSize: theme.FONT_SIZE_H4,
-            }}
-          >
-            My Profile
-          </Text>
-          <TouchableOpacity
-            style={{
-              width: 32,
-              height: 32,
-              backgroundColor: theme.NEUTRAL0_COLOR,
-              borderRadius: 32,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <CustomIcon name='More' size={20} color={theme.NEUTRAL100_COLOR} />
-          </TouchableOpacity>
-        </View>
-        <View>
           <View
             style={{
               flexDirection: 'row',
-              alignItems: 'center',
               justifyContent: 'space-between',
+              alignItems: 'center',
+              marginBottom: 16,
             }}
           >
-            <View style={{ width: '60%' }}>
-              <Image source={AvatarImage} />
-              <Text
-                style={{
-                  color: theme.NEUTRAL90_COLOR,
-                  fontFamily: theme.FONT_BOLD,
-                  fontSize: theme.FONT_SIZE_H5,
-                  marginTop: 16,
-                }}
-              >
-                Alessandra Blair
-              </Text>
-              <Text
-                style={{
-                  color: theme.NEUTRAL40_COLOR,
-                  fontFamily: theme.FONT_REGULAR,
-                  fontSize: theme.FONT_SIZE_LABEL,
-                  marginTop: 16,
-                }}
-              >
-                Hello world I’m Alessandra Blair, I’m from Italy 🇮🇹 I love
-                cooking so much!
-              </Text>
-            </View>
-            <TouchableOpacity
+            <Text
               style={{
-                paddingVertical: 8,
-                paddingHorizontal: 16,
-                backgroundColor: theme.NEUTRAL0_COLOR,
-                borderRadius: 10,
-                borderColor: theme.PRIMARY50_COLOR,
-                borderWidth: 1,
+                color: theme.NEUTRAL100_COLOR,
+                fontFamily: theme.FONT_BOLD,
+                fontSize: theme.FONT_SIZE_H4,
               }}
             >
-              <Text
-                style={{
-                  fontFamily: theme.FONT_BOLD,
-                  fontSize: theme.FONT_SIZE_LABEL,
-                  color: theme.PRIMARY50_COLOR,
-                  textAlign: 'center',
-                }}
-              >
-                Edit Profile
-              </Text>
+              My Profile
+            </Text>
+            <TouchableOpacity
+              style={{
+                width: 32,
+                height: 32,
+                backgroundColor: theme.NEUTRAL0_COLOR,
+                borderRadius: 32,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <CustomIcon
+                name='More'
+                size={20}
+                color={theme.NEUTRAL100_COLOR}
+              />
             </TouchableOpacity>
           </View>
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              marginTop: 20,
-            }}
-          >
-            {[1, 2, 3, 4].map((e) => (
-              <View>
+          <View>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}
+            >
+              <View style={{ width: '60%' }}>
+                <Image source={AvatarImage} />
                 <Text
                   style={{
-                    fontFamily: theme.FONT_REGULAR,
-                    fontSize: theme.FONT_SIZE_SMALL,
-                    color: theme.NEUTRAL40_COLOR,
-                    textAlign: 'center',
+                    color: theme.NEUTRAL90_COLOR,
+                    fontFamily: theme.FONT_BOLD,
+                    fontSize: theme.FONT_SIZE_H5,
+                    marginTop: 16,
                   }}
                 >
-                  Recipe
+                  Alessandra Blair
                 </Text>
+                <Text
+                  style={{
+                    color: theme.NEUTRAL40_COLOR,
+                    fontFamily: theme.FONT_REGULAR,
+                    fontSize: theme.FONT_SIZE_LABEL,
+                    marginTop: 16,
+                  }}
+                >
+                  Hello world I’m Alessandra Blair, I’m from Italy 🇮🇹 I love
+                  cooking so much!
+                </Text>
+              </View>
+              <TouchableOpacity
+                style={{
+                  paddingVertical: 8,
+                  paddingHorizontal: 16,
+                  backgroundColor: theme.NEUTRAL0_COLOR,
+                  borderRadius: 10,
+                  borderColor: theme.PRIMARY50_COLOR,
+                  borderWidth: 1,
+                }}
+                onPress={() => getProfile()}
+              >
                 <Text
                   style={{
                     fontFamily: theme.FONT_BOLD,
-                    fontSize: theme.FONT_SIZE_H5,
-                    color: theme.NEUTRAL90_COLOR,
+                    fontSize: theme.FONT_SIZE_LABEL,
+                    color: theme.PRIMARY50_COLOR,
                     textAlign: 'center',
                   }}
                 >
-                  3
+                  Edit Profile
                 </Text>
-              </View>
-            ))}
+              </TouchableOpacity>
+            </View>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                marginTop: 20,
+              }}
+            >
+              {[1, 2, 3, 4].map((e) => (
+                <View>
+                  <Text
+                    style={{
+                      fontFamily: theme.FONT_REGULAR,
+                      fontSize: theme.FONT_SIZE_SMALL,
+                      color: theme.NEUTRAL40_COLOR,
+                      textAlign: 'center',
+                    }}
+                  >
+                    Recipe
+                  </Text>
+                  <Text
+                    style={{
+                      fontFamily: theme.FONT_BOLD,
+                      fontSize: theme.FONT_SIZE_H5,
+                      color: theme.NEUTRAL90_COLOR,
+                      textAlign: 'center',
+                    }}
+                  >
+                    3
+                  </Text>
+                </View>
+              ))}
+            </View>
           </View>
         </View>
-      </View>
-      <Tab.Navigator
-        tabBar={(props) => <MyTabBar {...props} />}
-        screenOptions={{
-          tabBarScrollEnabled: true,
-        }}
-        sceneContainerStyle={{ backgroundColor: 'white' }}
-      >
-        <Tab.Screen name='Video' component={Video} />
-        <Tab.Screen name='Recipe' component={Recipe} />
-      </Tab.Navigator>
-    </>
-  );
+        <Tab.Navigator
+          tabBar={(props) => <MyTabBar {...props} />}
+          screenOptions={{
+            tabBarScrollEnabled: true,
+          }}
+          sceneContainerStyle={{ backgroundColor: 'white' }}
+        >
+          <Tab.Screen name='Video' component={Video} />
+          <Tab.Screen name='Recipe' component={Recipe} />
+        </Tab.Navigator>
+      </>
+    );
+  }
+
+  return profileLayout;
 };
 
 const styles = StyleSheet.create({
