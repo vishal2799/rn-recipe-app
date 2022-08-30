@@ -15,9 +15,12 @@ const RecentCard = ({ data }) => {
         })
       }
     >
-      <View>
+      <View style={{ marginRight: 20 }}>
         <View>
-          <Image source={recentImage} />
+          <Image
+            source={{ uri: data.imageUrl }}
+            style={{ width: 120, height: 100 }}
+          />
           <View style={{ width: '90%', marginTop: 8 }}>
             <Text
               style={{
@@ -26,7 +29,7 @@ const RecentCard = ({ data }) => {
                 fontFamily: theme.FONT_BOLD,
               }}
             >
-              Indonesian chicken burger
+              {data.title}
             </Text>
             <Text
               style={{

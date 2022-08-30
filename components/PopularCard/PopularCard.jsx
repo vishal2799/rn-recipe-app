@@ -49,7 +49,7 @@ const PopularCard = ({ data }) => {
                 paddingHorizontal: 8,
               }}
             >
-              Pepper sweetcorn ramen
+              {data.title}
             </Text>
           </TouchableOpacity>
         </View>
@@ -70,7 +70,7 @@ const PopularCard = ({ data }) => {
               color: theme.NEUTRAL90_COLOR,
             }}
           >
-            10 MINS
+            {data.cookTime} MINS
           </Text>
         </View>
         <View
@@ -92,7 +92,10 @@ const PopularCard = ({ data }) => {
               })
             }
           >
-            <Image source={popularImage} style={{ borderRadius: 55 }} />
+            <Image
+              source={{ uri: data.imageUrl }}
+              style={{ borderRadius: 50, width: 90, height: 90 }}
+            />
           </TouchableOpacity>
         </View>
         <View style={{ position: 'absolute', right: 12, bottom: 12 }}>

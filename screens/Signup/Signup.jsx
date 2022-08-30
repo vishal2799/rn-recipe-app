@@ -67,9 +67,9 @@ function Signup({ navigation }) {
           saved: [],
           recipes: [],
           videos: [],
-          authorId: userCredential.user.uid,
         };
-        addDoc(collection(db, 'users'), data)
+        setDoc(doc(db, 'users', userCredential.user.uid), data)
+          //addDoc(collection(db, 'users', userCredential.user.uid), data)
           .then((user) => {
             console.log(user);
             navigation.navigate('Sign In');

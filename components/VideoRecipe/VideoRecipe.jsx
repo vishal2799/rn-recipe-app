@@ -1,14 +1,65 @@
 import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
-import React from 'react';
+import React, { useEffect } from 'react';
 import theme from '../../styles/theme.style';
 import CustomIcon from '../CustomIcon/CustomIcon';
 import styles from '../../styles/styles';
 import videoImage from '../../assets/images/video.png';
 import personImage from '../../assets/images/Avatar.png';
 import { useNavigation } from '@react-navigation/native';
+import { UserContext } from '../../context/user';
+import { db } from '../../config/Firebase/firebaseConfig';
+import { useAuthentication } from '../../utils/hooks/useAuthentication';
+import { doc, arrayUnion, updateDoc, arrayRemove } from 'firebase/firestore';
+import { onAuthStateChanged, getAuth } from 'firebase/auth';
 
 const VideoRecipe = ({ data }) => {
+  const { userDetails, isLoading } = React.useContext(UserContext);
   //  const navigation = useNavigation();
+
+  function timeConvert(n) {
+    var num = +n;
+    var hours = num / 60;
+    var rhours = Math.floor(hours);
+    if (rhours < 10) {
+      rhours = '0' + rhours;
+    }
+    var minutes = (hours - rhours) * 60;
+    var rminutes = Math.round(minutes);
+    if (rminutes < 10) {
+      rminutes = '0' + rminutes;
+    }
+    return num > 60
+      ? rhours + ':' + rminutes + ':' + '00'
+      : rminutes + ':' + '00';
+  }
+  let saved;
+
+  for (let i = 0; i <= userDetails.saved.length; i++) {
+    if (data.id == userDetails.saved[i]) {
+      saved = 'Yes';
+    }
+  }
+
+  const onSave = () => {
+    if (userDetails.userId == data.userId) {
+      console.log('cant');
+      return;
+    }
+    const docRef = doc(db, 'users', userDetails.userId);
+    if (!saved) {
+      updateDoc(docRef, {
+        saved: arrayUnion(data.id),
+      })
+        .then(() => console.log('saved added'))
+        .catch((e) => console.log(e.message));
+    } else {
+      updateDoc(docRef, {
+        saved: arrayRemove(data.id),
+      })
+        .then(() => console.log('saved deleted'))
+        .catch((e) => console.log(e.message));
+    }
+  };
 
   return (
     // <View style={{ width: '100%', height: 100 }}>
@@ -28,13 +79,13 @@ const VideoRecipe = ({ data }) => {
               color: theme.NEUTRAL0_COLOR,
               backgroundColor: theme.NEUTRAL50_COLOR,
               paddingVertical: 4,
-              width: 42,
+              width: 55,
               paddingHorizontal: 8,
               textAlign: 'center',
               borderRadius: 8,
             }}
           >
-            {data.cookTime}
+            {timeConvert(data.cookTime)}
           </Text>
         </View>
         <View style={styles.rating}>
@@ -91,8 +142,13 @@ const VideoRecipe = ({ data }) => {
               alignItems: 'center',
               justifyContent: 'center',
             }}
+            onPress={() => onSave()}
           >
-            <CustomIcon name='Bookmark' size={20} />
+            <CustomIcon
+              name='Bookmark'
+              size={20}
+              color={saved ? theme.PRIMARY50_COLOR : ''}
+            />
           </TouchableOpacity>
         </View>
       </View>
@@ -140,7 +196,10 @@ const VideoRecipe = ({ data }) => {
             })
           }
         >
-          <Image source={personImage} />
+          <Image
+            source={{ uri: data.authorPhoto }}
+            style={{ width: 30, height: 30, borderRadius: 20 }}
+          />
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() =>
@@ -157,7 +216,7 @@ const VideoRecipe = ({ data }) => {
               marginLeft: 8,
             }}
           >
-            By Niki Samantha
+            By {data.authorName}
           </Text>
         </TouchableOpacity>
       </View>

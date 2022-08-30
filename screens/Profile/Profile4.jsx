@@ -22,7 +22,9 @@ import VideoRecipe from '../../components/VideoRecipe/VideoRecipe';
 import { recipeData, recipeData2 } from '../../mockData';
 import ImageRecipe from '../../components/ImageRecipe/ImageRecipe';
 import styles from '../../styles/styles';
-import { UserContext } from '../../context/user';
+import { useAuthentication } from '../../utils/hooks/useAuthentication';
+import { db } from '../../config/Firebase/firebaseConfig';
+import { doc, getDocs, query, collection, where } from 'firebase/firestore';
 
 const HEADER_HEIGHT = 250;
 const DATA = [0, 1, 2, 3, 4];
@@ -269,11 +271,57 @@ function MyTabBar2({
 }
 
 const Example = React.forwardRef(({ emptyContacts, ...props }, ref) => {
-  const { isLoading, recipes, userDetails } = React.useContext(UserContext);
+  const [profile, setProfile] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [hrecipes, setHrecipes] = useState([]);
 
   const renderItem = ({ item }) => <VideoRecipe data={item} />;
 
   const renderItem1 = ({ item }) => <ImageRecipe data={item} />;
+
+  const { user } = useAuthentication();
+
+  async function recipefun() {
+    const q = query(
+      collection(db, 'recipes'),
+      where('authorID', '==', user.uid)
+    );
+    const querySnapshot = await getDocs(q);
+    const newRecipes = [];
+    querySnapshot.forEach((doc) => {
+      const recipe = doc.data();
+      newRecipes.push(recipe);
+      console.log(recipe.title);
+    });
+    setHrecipes(newRecipes);
+  }
+  useEffect(() => {
+    recipefun();
+  }, []);
+
+  async function profileData() {
+    setLoading(true);
+    const q = query(collection(db, 'users'), where('authorId', '==', user.uid));
+    const docSnap = await getDocs(q);
+
+    docSnap.forEach((doc) => {
+      console.log(doc.id, ' => ', doc.data());
+      setProfile(doc.data());
+      setLoading(false);
+    });
+
+    setLoading(false);
+  }
+
+  useEffect(() => {
+    profileData();
+  }, []);
+
+  // const renderItem1 = React.useCallback(({ index }) => {
+  //   return (
+  //     <View style={[styles.box, index % 2 === 0 ? styles.boxB : styles.boxA]} />
+  //   );
+  // }, []);
 
   const makeLabel = useCallback(
     (label) => (props) =>
@@ -289,26 +337,23 @@ const Example = React.forwardRef(({ emptyContacts, ...props }, ref) => {
 
   let profileLayout;
 
-  if (isLoading) {
+  if (loading) {
     profileLayout = (
       <View style={{ marginTop: 100 }}>
         <Text>Loading...</Text>
       </View>
     );
   } else {
-    console.log(recipes);
     profileLayout = (
       <Tabs.Container
         ref={ref}
         {...props}
-        renderHeader={() => (
-          <Header profile={userDetails} loading={isLoading} />
-        )}
+        renderHeader={() => <Header profile={profile} loading={loading} />}
         renderTabBar={MyTabBar2}
       >
         <Tabs.Tab name='Video' label={makeLabel('Video')}>
           <Tabs.FlatList
-            data={recipes.filter((e) => e.type === 'video')}
+            data={hrecipes.filter((e) => e.type === 'video')}
             renderItem={renderItem}
             keyExtractor={identity}
             style={{ paddingHorizontal: 20, marginTop: 20, marginBottom: 110 }}
@@ -320,7 +365,7 @@ const Example = React.forwardRef(({ emptyContacts, ...props }, ref) => {
           <View style={[styles.box, styles.boxB]} />
         </Tabs.ScrollView> */}
           <Tabs.FlatList
-            data={recipes.filter((e) => e.type === 'recipe')}
+            data={hrecipes.filter((e) => e.type === 'recipe')}
             renderItem={renderItem1}
             keyExtractor={identity}
             style={{ paddingHorizontal: 20, marginTop: 20, marginBottom: 20 }}

@@ -12,11 +12,14 @@ const Creator = ({ data }) => {
       <TouchableOpacity
         onPress={() =>
           navigation.navigate('Profile', {
-            id: data.personId,
+            id: data.authorId,
           })
         }
       >
-        <Image source={avatarImage} />
+        <Image
+          source={{ uri: data.profilePhotoUrl }}
+          style={{ width: 90, height: 100, borderRadius: 50 }}
+        />
         <Text
           style={{
             color: theme.NEUTRAL90_COLOR,
@@ -29,7 +32,7 @@ const Creator = ({ data }) => {
             marginTop: 8,
           }}
         >
-          Troyan Smith
+          {data.name}
         </Text>
       </TouchableOpacity>
     </View>

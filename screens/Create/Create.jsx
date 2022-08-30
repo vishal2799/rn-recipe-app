@@ -29,7 +29,7 @@ import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { v4 as uuid } from 'uuid';
 import { Picker } from '@react-native-picker/picker';
 import NumericInput from 'react-native-numeric-input';
-
+import { UserContext } from '../../context/user';
 const schema = yup.object().shape({
   ingredients: yup
     .array()
@@ -56,26 +56,9 @@ const schema = yup.object().shape({
 });
 
 export const Create = () => {
-  const { user } = useAuthentication();
-  const [categories, setCategories] = useState([]);
-
-  async function fetchCategories() {
-    const q = query(collection(db, 'categories'));
-    const querySnapshot = await getDocs(q);
-    const newCategories = [];
-    querySnapshot.forEach((doc) => {
-      const category = doc.data();
-      newCategories.push(category);
-      console.log(category.name);
-    });
-    setCategories(newCategories);
-  }
-
-  useEffect(() => {
-    fetchCategories();
-  }, []);
-
-  const [entities, setEntities] = useState([]);
+  const { isLoading, categoriesList, userDetails } =
+    React.useContext(UserContext);
+  const [categories, setCategories] = useState(categoriesList);
 
   const [selectedImage, setSelectedImage] = React.useState(null);
 
@@ -143,7 +126,10 @@ export const Create = () => {
       imageUrl: url,
       cookTime: values.cookTime,
       serves: values.serves,
-      authorID: user.uid,
+      userId: userDetails.userId,
+      authorName: userDetails.name,
+      authorPhoto: userDetails.profilePhotoUrl,
+      id: uuid(),
       type: values.type,
       category: values.categories,
       createdAt: serverTimestamp(),
@@ -187,103 +173,111 @@ export const Create = () => {
     return add;
   }
 
-  return (
-    <SafeAreaView
-      style={{
-        flex: 1,
-        backgroundColor: 'white',
-      }}
-    >
-      <ScrollView style={{ backgroundColor: 'white' }}>
-        <View
-          style={{ paddingHorizontal: 20, marginTop: 30, marginBottom: 12 }}
-        >
+  let layout;
+  if (isLoading) {
+    layout = (
+      <View style={{ marginTop: 70 }}>
+        <Text>Loading...</Text>
+      </View>
+    );
+  } else {
+    layout = (
+      <SafeAreaView
+        style={{
+          flex: 1,
+          backgroundColor: 'white',
+        }}
+      >
+        <ScrollView style={{ backgroundColor: 'white' }}>
           <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              marginBottom: 16,
-            }}
+            style={{ paddingHorizontal: 20, marginTop: 30, marginBottom: 12 }}
           >
-            <TouchableOpacity
+            <View
               style={{
-                width: 32,
-                height: 32,
-                backgroundColor: theme.NEUTRAL0_COLOR,
-                borderRadius: 32,
-                display: 'flex',
+                flexDirection: 'row',
+                justifyContent: 'space-between',
                 alignItems: 'center',
-                justifyContent: 'center',
+                marginBottom: 16,
               }}
             >
-              <CustomIcon
-                name='Arrow-Left'
-                size={20}
-                color={theme.NEUTRAL100_COLOR}
-              />
-            </TouchableOpacity>
-            <TouchableOpacity
+              <TouchableOpacity
+                style={{
+                  width: 32,
+                  height: 32,
+                  backgroundColor: theme.NEUTRAL0_COLOR,
+                  borderRadius: 32,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <CustomIcon
+                  name='Arrow-Left'
+                  size={20}
+                  color={theme.NEUTRAL100_COLOR}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={{
+                  width: 32,
+                  height: 32,
+                  backgroundColor: theme.NEUTRAL0_COLOR,
+                  borderRadius: 32,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <CustomIcon
+                  name='More'
+                  size={20}
+                  color={theme.NEUTRAL100_COLOR}
+                />
+              </TouchableOpacity>
+            </View>
+            <Text
               style={{
-                width: 32,
-                height: 32,
-                backgroundColor: theme.NEUTRAL0_COLOR,
-                borderRadius: 32,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
+                fontFamily: theme.FONT_BOLD,
+                fontSize: theme.FONT_SIZE_H4,
+                color: theme.NEUTRAL90_COLOR,
               }}
             >
-              <CustomIcon
-                name='More'
-                size={20}
-                color={theme.NEUTRAL100_COLOR}
-              />
-            </TouchableOpacity>
+              Create Recipe
+            </Text>
           </View>
-          <Text
-            style={{
-              fontFamily: theme.FONT_BOLD,
-              fontSize: theme.FONT_SIZE_H4,
-              color: theme.NEUTRAL90_COLOR,
-            }}
+          <View
+            style={{ paddingHorizontal: 20, paddingBottom: 14, paddingTop: 12 }}
           >
-            Create Recipe
-          </Text>
-        </View>
-        <View
-          style={{ paddingHorizontal: 20, paddingBottom: 14, paddingTop: 12 }}
-        >
-          <Formik
-            initialValues={{
-              ingredients: [{ name: '', quantity: '' }],
-              title: '',
-              type: 'video',
-              categories: 'All',
-              serves: 0,
-              cookTime: 0,
-            }}
-            validationSchema={schema}
-            onSubmit={(values) => onSave(values)}
-          >
-            {({
-              errors,
-              touched,
-              values,
-              handleBlur,
-              handleChange,
-              handleSubmit,
-              isValid,
-              dirty,
-              setFieldValue,
-            }) => (
-              <View>
-                {/* <Field as='select' name='color'>
+            <Formik
+              initialValues={{
+                ingredients: [{ name: '', quantity: '' }],
+                title: '',
+                type: 'video',
+                categories: 'All',
+                serves: 0,
+                cookTime: 0,
+              }}
+              validationSchema={schema}
+              onSubmit={(values) => onSave(values)}
+            >
+              {({
+                errors,
+                touched,
+                values,
+                handleBlur,
+                handleChange,
+                handleSubmit,
+                isValid,
+                dirty,
+                setFieldValue,
+              }) => (
+                <View>
+                  {/* <Field as='select' name='color'>
                   <option value='red'>Red</option>
                   <option value='green'>Green</option>
                   <option value='blue'>Blue</option>
                 </Field> */}
-                {/* <View>
+                  {/* <View>
                   <TouchableOpacity
                     onPress={openImagePickerAsync}
                     style={styles.button}
@@ -291,418 +285,426 @@ export const Create = () => {
                     <Text style={styles.buttonText}>Pick a photo</Text>
                   </TouchableOpacity>
                 </View> */}
-                <View>
-                  {selectedImage !== null ? (
-                    <Image
-                      source={{ uri: selectedImage.localUri }}
-                      style={{ width: '100%', height: 200, borderRadius: 10 }}
+                  <View>
+                    {selectedImage !== null ? (
+                      <Image
+                        source={{ uri: selectedImage.localUri }}
+                        style={{ width: '100%', height: 200, borderRadius: 10 }}
+                      />
+                    ) : (
+                      <Image
+                        source={RecipeImage}
+                        style={{ width: '100%', borderRadius: 10 }}
+                      />
+                    )}
+                    <View
+                      style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                      }}
+                    >
+                      <TouchableOpacity
+                        style={{
+                          width: 48,
+                          height: 48,
+                          backgroundColor: theme.NEUTRAL50_COLOR,
+                          borderRadius: 48,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                        }}
+                      >
+                        <CustomIcon
+                          name='Play'
+                          size={20}
+                          color={theme.NEUTRAL0_COLOR}
+                        />
+                      </TouchableOpacity>
+                    </View>
+                    <View
+                      style={{
+                        position: 'absolute',
+                        top: 8,
+                        right: 8,
+                      }}
+                    >
+                      <TouchableOpacity
+                        style={{
+                          width: 32,
+                          height: 32,
+                          backgroundColor: theme.NEUTRAL0_COLOR,
+                          borderRadius: 48,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                        }}
+                        onPress={openImagePickerAsync}
+                      >
+                        <CustomIcon
+                          name='Edit'
+                          size={20}
+                          color={theme.PRIMARY50_COLOR}
+                        />
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                  <View style={styles.SearchContainer}>
+                    <TextInput
+                      name='title'
+                      placeholder='Enter recipe title'
+                      style={styles.textInput}
+                      onChangeText={handleChange('title')}
+                      onBlur={handleBlur('title')}
+                      value={values.title}
+                      keyboardType='email-address'
                     />
-                  ) : (
-                    <Image
-                      source={RecipeImage}
-                      style={{ width: '100%', borderRadius: 10 }}
-                    />
+                  </View>
+                  {errors.title && touched.title && (
+                    <Text style={styles.errorText}>{errors.title}</Text>
                   )}
-                  <View
-                    style={{
-                      position: 'absolute',
-                      top: 0,
-                      left: 0,
-                      right: 0,
-                      bottom: 0,
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                    }}
-                  >
-                    <TouchableOpacity
+                  <View>
+                    <View
                       style={{
-                        width: 48,
-                        height: 48,
-                        backgroundColor: theme.NEUTRAL50_COLOR,
-                        borderRadius: 48,
-                        display: 'flex',
+                        marginTop: 12,
+                        borderRadius: 12,
+                        backgroundColor: theme.NEUTRAL10_COLOR,
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
                         alignItems: 'center',
-                        justifyContent: 'center',
+                        paddingHorizontal: 16,
+                        paddingVertical: 12,
                       }}
                     >
-                      <CustomIcon
-                        name='Play'
-                        size={20}
-                        color={theme.NEUTRAL0_COLOR}
-                      />
-                    </TouchableOpacity>
-                  </View>
-                  <View
-                    style={{
-                      position: 'absolute',
-                      top: 8,
-                      right: 8,
-                    }}
-                  >
-                    <TouchableOpacity
-                      style={{
-                        width: 32,
-                        height: 32,
-                        backgroundColor: theme.NEUTRAL0_COLOR,
-                        borderRadius: 48,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                      }}
-                      onPress={openImagePickerAsync}
-                    >
-                      <CustomIcon
-                        name='Edit'
-                        size={20}
-                        color={theme.PRIMARY50_COLOR}
-                      />
-                    </TouchableOpacity>
-                  </View>
-                </View>
-                <View style={styles.SearchContainer}>
-                  <TextInput
-                    name='title'
-                    placeholder='Enter recipe title'
-                    style={styles.textInput}
-                    onChangeText={handleChange('title')}
-                    onBlur={handleBlur('title')}
-                    value={values.title}
-                    keyboardType='email-address'
-                  />
-                </View>
-                {errors.title && touched.title && (
-                  <Text style={styles.errorText}>{errors.title}</Text>
-                )}
-                <View>
-                  <View
-                    style={{
-                      marginTop: 12,
-                      borderRadius: 12,
-                      backgroundColor: theme.NEUTRAL10_COLOR,
-                      flexDirection: 'row',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      paddingHorizontal: 16,
-                      paddingVertical: 12,
-                    }}
-                  >
-                    <View
-                      style={{ flexDirection: 'row', alignItems: 'center' }}
-                    >
-                      <CustomIcon
-                        name='Clock'
-                        size={20}
-                        color={theme.PRIMARY50_COLOR}
-                        style={{
-                          padding: 8,
-                          backgroundColor: theme.NEUTRAL0_COLOR,
-                          borderRadius: 10,
-                        }}
-                      />
-                      <Text
-                        style={{
-                          fontFamily: theme.FONT_BOLD,
-                          fontSize: theme.FONT_SIZE_P,
-                          color: theme.NEUTRAL90_COLOR,
-                          marginLeft: 16,
-                        }}
+                      <View
+                        style={{ flexDirection: 'row', alignItems: 'center' }}
                       >
-                        Serves
-                      </Text>
-                    </View>
-                    <View
-                      style={{ flexDirection: 'row', alignItems: 'center' }}
-                    >
-                      {/* <Text
-                        style={{
-                          fontFamily: theme.FONT_REGULAR,
-                          fontSize: theme.FONT_SIZE_LABEL,
-                          color: theme.NEUTRAL40_COLOR,
-                          marginRight: 8,
-                        }}
-                      >
-                        1
-                      </Text> */}
-                      <NumericInput
-                        step={1}
-                        minValue={0}
-                        //onChange={handleChange('serves')}
-                        onChange={(v) => {
-                          setFieldValue('serves', v);
-                        }}
-                        value={values.serves}
-                      />
-                      <TouchableOpacity style={{ marginLeft: 10 }}>
                         <CustomIcon
-                          name='Arrow-Right'
-                          size={24}
-                          color={theme.NEUTRAL100_COLOR}
+                          name='Clock'
+                          size={20}
+                          color={theme.PRIMARY50_COLOR}
+                          style={{
+                            padding: 8,
+                            backgroundColor: theme.NEUTRAL0_COLOR,
+                            borderRadius: 10,
+                          }}
                         />
-                      </TouchableOpacity>
-                    </View>
-                    {errors.serves && touched.serves && (
-                      <Text style={styles.errorText}>{errors.serves}</Text>
-                    )}
-                  </View>
-                  <View
-                    style={{
-                      marginTop: 12,
-                      borderRadius: 12,
-                      backgroundColor: theme.NEUTRAL10_COLOR,
-                      flexDirection: 'row',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      paddingHorizontal: 16,
-                      paddingVertical: 12,
-                    }}
-                  >
-                    <View
-                      style={{ flexDirection: 'row', alignItems: 'center' }}
-                    >
-                      <CustomIcon
-                        name='Clock'
-                        size={20}
-                        color={theme.PRIMARY50_COLOR}
-                        style={{
-                          padding: 8,
-                          backgroundColor: theme.NEUTRAL0_COLOR,
-                          borderRadius: 10,
-                        }}
-                      />
-                      <Text
-                        style={{
-                          fontFamily: theme.FONT_BOLD,
-                          fontSize: theme.FONT_SIZE_P,
-                          color: theme.NEUTRAL90_COLOR,
-                          marginLeft: 16,
-                        }}
-                      >
-                        Cook time
-                      </Text>
-                    </View>
-                    <View
-                      style={{ flexDirection: 'row', alignItems: 'center' }}
-                    >
-                      {/* <Text
-                        style={{
-                          fontFamily: theme.FONT_REGULAR,
-                          fontSize: theme.FONT_SIZE_LABEL,
-                          color: theme.NEUTRAL40_COLOR,
-                          marginRight: 8,
-                        }}
-                      >
-                        1
-                      </Text> */}
-                      <NumericInput
-                        step={10}
-                        minValue={0}
-                        //onChange={handleChange('serves')}
-                        onChange={(v) => {
-                          setFieldValue('cookTime', v);
-                        }}
-                        value={values.cookTime}
-                      />
-                      <TouchableOpacity style={{ marginLeft: 10 }}>
-                        <CustomIcon
-                          name='Arrow-Right'
-                          size={24}
-                          color={theme.NEUTRAL100_COLOR}
-                        />
-                      </TouchableOpacity>
-                    </View>
-                    {errors.cookTime && touched.cookTime && (
-                      <Text style={styles.errorText}>{errors.cookTime}</Text>
-                    )}
-                  </View>
-                </View>
-                <View style={styles.SearchContainer}>
-                  <Picker
-                    selectedValue={values.type}
-                    onValueChange={handleChange('type')}
-                  >
-                    <Picker.Item label='Video' value='video' />
-                    <Picker.Item label='Recipe' value='recipe' />
-                  </Picker>
-                </View>
-                <View style={styles.SearchContainer}>
-                  <Picker
-                    selectedValue={values.categories}
-                    onValueChange={handleChange('categories')}
-                  >
-                    {categories.map((e) => (
-                      <Picker.Item label={e.name} value={e.name} />
-                    ))}
-                  </Picker>
-                </View>
-                <View
-                  style={{
-                    paddingBottom: 14,
-                    paddingTop: 22,
-                  }}
-                >
-                  <Text
-                    style={{
-                      fontFamily: theme.FONT_BOLD,
-                      fontSize: theme.FONT_SIZE_H5,
-                      color: theme.NEUTRAL100_COLOR,
-                    }}
-                  >
-                    Ingredients
-                  </Text>
-                  <FieldArray
-                    name='ingredients'
-                    render={(arrayHelpers) => (
-                      <View>
-                        {values.ingredients.map((ingredient, index) => (
-                          <View
-                            style={{
-                              flexDirection: 'row',
-                              justifyContent: 'space-between',
-                              alignItems: 'baseline',
-                              marginBottom: 15,
-                            }}
-                          >
-                            <View
-                              style={[styles.SearchContainer, { width: '50%' }]}
-                            >
-                              <TextInput
-                                name={`ingredients[${index}].name`}
-                                onChangeText={handleChange(
-                                  `ingredients[${index}].name`
-                                )}
-                                onBlur={handleBlur(
-                                  `ingredients[${index}].name`
-                                )}
-                                value={values.ingredients[index].name}
-                                placeholder='Item Name'
-                                style={styles.SearchField}
-                              />
-                            </View>
-                            <View
-                              style={[styles.SearchContainer, { width: '35%' }]}
-                            >
-                              <TextInput
-                                name={`ingredients[${index}].quantity`}
-                                onChangeText={handleChange(
-                                  `ingredients[${index}].quantity`
-                                )}
-                                onBlur={handleBlur(
-                                  `ingredients[${index}].quantity`
-                                )}
-                                value={values.ingredients[index].quantity}
-                                placeholder='Quantity'
-                                style={styles.SearchField}
-                              />
-                            </View>
-                            <TouchableOpacity
-                              onPress={() => arrayHelpers.remove(index)}
-                            >
-                              <CustomIcon
-                                name='Minus-Border'
-                                size={24}
-                                color={theme.NEUTRAL100_COLOR}
-                              />
-                            </TouchableOpacity>
-                          </View>
-                        ))}
-                        {checkIngredient(values.ingredients) ? (
-                          <View
-                            style={{
-                              flexDirection: 'row',
-                              marginTop: 16,
-                              alignItems: 'center',
-                            }}
-                          >
-                            <TouchableOpacity
-                              onPress={() =>
-                                arrayHelpers.push({ name: '', quantity: '' })
-                              }
-                            >
-                              <CustomIcon
-                                name='Plus'
-                                size={24}
-                                color={theme.NEUTRAL90_COLOR}
-                              />
-                            </TouchableOpacity>
-
-                            <Text
-                              style={{
-                                fontFamily: theme.FONT_BOLD,
-                                fontSize: theme.FONT_SIZE_P,
-                                color: theme.NEUTRAL90_COLOR,
-                                marginLeft: 4,
-                              }}
-                            >
-                              Add new Ingredient
-                            </Text>
-                          </View>
-                        ) : (
-                          <View
-                            style={{
-                              flexDirection: 'row',
-                              marginTop: 16,
-                              alignItems: 'center',
-                            }}
-                          >
-                            <TouchableOpacity
-                              disabled={true}
-                              onPress={() =>
-                                arrayHelpers.push({ name: '', quantity: '' })
-                              }
-                            >
-                              <CustomIcon
-                                name='Plus'
-                                size={24}
-                                color={theme.NEUTRAL90_COLOR}
-                              />
-                            </TouchableOpacity>
-
-                            <Text
-                              style={{
-                                fontFamily: theme.FONT_BOLD,
-                                fontSize: theme.FONT_SIZE_P,
-                                color: theme.NEUTRAL90_COLOR,
-                                marginLeft: 4,
-                              }}
-                            >
-                              Add new Ingredient
-                            </Text>
-                          </View>
-                        )}
+                        <Text
+                          style={{
+                            fontFamily: theme.FONT_BOLD,
+                            fontSize: theme.FONT_SIZE_P,
+                            color: theme.NEUTRAL90_COLOR,
+                            marginLeft: 16,
+                          }}
+                        >
+                          Serves
+                        </Text>
                       </View>
-                    )}
-                  />
-                </View>
-                <TouchableOpacity
-                  style={{
-                    paddingVertical: 16,
-                    paddingHorizontal: 32,
-                    backgroundColor: theme.PRIMARY50_COLOR,
-                    borderRadius: 10,
-                    marginBottom: 110,
-                    marginTop: 10,
-                  }}
-                  onPress={handleSubmit}
-                  disabled={!(isValid && dirty)}
-                >
-                  <Text
+                      <View
+                        style={{ flexDirection: 'row', alignItems: 'center' }}
+                      >
+                        {/* <Text
+                        style={{
+                          fontFamily: theme.FONT_REGULAR,
+                          fontSize: theme.FONT_SIZE_LABEL,
+                          color: theme.NEUTRAL40_COLOR,
+                          marginRight: 8,
+                        }}
+                      >
+                        1
+                      </Text> */}
+                        <NumericInput
+                          step={1}
+                          minValue={0}
+                          //onChange={handleChange('serves')}
+                          onChange={(v) => {
+                            setFieldValue('serves', v);
+                          }}
+                          value={values.serves}
+                        />
+                        <TouchableOpacity style={{ marginLeft: 10 }}>
+                          <CustomIcon
+                            name='Arrow-Right'
+                            size={24}
+                            color={theme.NEUTRAL100_COLOR}
+                          />
+                        </TouchableOpacity>
+                      </View>
+                      {errors.serves && touched.serves && (
+                        <Text style={styles.errorText}>{errors.serves}</Text>
+                      )}
+                    </View>
+                    <View
+                      style={{
+                        marginTop: 12,
+                        borderRadius: 12,
+                        backgroundColor: theme.NEUTRAL10_COLOR,
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        paddingHorizontal: 16,
+                        paddingVertical: 12,
+                      }}
+                    >
+                      <View
+                        style={{ flexDirection: 'row', alignItems: 'center' }}
+                      >
+                        <CustomIcon
+                          name='Clock'
+                          size={20}
+                          color={theme.PRIMARY50_COLOR}
+                          style={{
+                            padding: 8,
+                            backgroundColor: theme.NEUTRAL0_COLOR,
+                            borderRadius: 10,
+                          }}
+                        />
+                        <Text
+                          style={{
+                            fontFamily: theme.FONT_BOLD,
+                            fontSize: theme.FONT_SIZE_P,
+                            color: theme.NEUTRAL90_COLOR,
+                            marginLeft: 16,
+                          }}
+                        >
+                          Cook time
+                        </Text>
+                      </View>
+                      <View
+                        style={{ flexDirection: 'row', alignItems: 'center' }}
+                      >
+                        {/* <Text
+                        style={{
+                          fontFamily: theme.FONT_REGULAR,
+                          fontSize: theme.FONT_SIZE_LABEL,
+                          color: theme.NEUTRAL40_COLOR,
+                          marginRight: 8,
+                        }}
+                      >
+                        1
+                      </Text> */}
+                        <NumericInput
+                          step={10}
+                          minValue={0}
+                          //onChange={handleChange('serves')}
+                          onChange={(v) => {
+                            setFieldValue('cookTime', v);
+                          }}
+                          value={values.cookTime}
+                        />
+                        <TouchableOpacity style={{ marginLeft: 10 }}>
+                          <CustomIcon
+                            name='Arrow-Right'
+                            size={24}
+                            color={theme.NEUTRAL100_COLOR}
+                          />
+                        </TouchableOpacity>
+                      </View>
+                      {errors.cookTime && touched.cookTime && (
+                        <Text style={styles.errorText}>{errors.cookTime}</Text>
+                      )}
+                    </View>
+                  </View>
+                  <View style={styles.SearchContainer}>
+                    <Picker
+                      selectedValue={values.type}
+                      onValueChange={handleChange('type')}
+                    >
+                      <Picker.Item label='Video' value='video' />
+                      <Picker.Item label='Recipe' value='recipe' />
+                    </Picker>
+                  </View>
+                  <View style={styles.SearchContainer}>
+                    <Picker
+                      selectedValue={values.categories}
+                      onValueChange={handleChange('categories')}
+                    >
+                      {categories.map((e) => (
+                        <Picker.Item label={e.name} value={e.name} />
+                      ))}
+                    </Picker>
+                  </View>
+                  <View
                     style={{
-                      fontFamily: theme.FONT_BOLD,
-                      fontSize: theme.FONT_SIZE_P,
-                      color: theme.NEUTRAL0_COLOR,
-                      textAlign: 'center',
+                      paddingBottom: 14,
+                      paddingTop: 22,
                     }}
                   >
-                    Save my recipes
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            )}
-          </Formik>
-        </View>
-      </ScrollView>
-    </SafeAreaView>
-  );
+                    <Text
+                      style={{
+                        fontFamily: theme.FONT_BOLD,
+                        fontSize: theme.FONT_SIZE_H5,
+                        color: theme.NEUTRAL100_COLOR,
+                      }}
+                    >
+                      Ingredients
+                    </Text>
+                    <FieldArray
+                      name='ingredients'
+                      render={(arrayHelpers) => (
+                        <View>
+                          {values.ingredients.map((ingredient, index) => (
+                            <View
+                              style={{
+                                flexDirection: 'row',
+                                justifyContent: 'space-between',
+                                alignItems: 'baseline',
+                                marginBottom: 15,
+                              }}
+                            >
+                              <View
+                                style={[
+                                  styles.SearchContainer,
+                                  { width: '50%' },
+                                ]}
+                              >
+                                <TextInput
+                                  name={`ingredients[${index}].name`}
+                                  onChangeText={handleChange(
+                                    `ingredients[${index}].name`
+                                  )}
+                                  onBlur={handleBlur(
+                                    `ingredients[${index}].name`
+                                  )}
+                                  value={values.ingredients[index].name}
+                                  placeholder='Item Name'
+                                  style={styles.SearchField}
+                                />
+                              </View>
+                              <View
+                                style={[
+                                  styles.SearchContainer,
+                                  { width: '35%' },
+                                ]}
+                              >
+                                <TextInput
+                                  name={`ingredients[${index}].quantity`}
+                                  onChangeText={handleChange(
+                                    `ingredients[${index}].quantity`
+                                  )}
+                                  onBlur={handleBlur(
+                                    `ingredients[${index}].quantity`
+                                  )}
+                                  value={values.ingredients[index].quantity}
+                                  placeholder='Quantity'
+                                  style={styles.SearchField}
+                                />
+                              </View>
+                              <TouchableOpacity
+                                onPress={() => arrayHelpers.remove(index)}
+                              >
+                                <CustomIcon
+                                  name='Minus-Border'
+                                  size={24}
+                                  color={theme.NEUTRAL100_COLOR}
+                                />
+                              </TouchableOpacity>
+                            </View>
+                          ))}
+                          {checkIngredient(values.ingredients) ? (
+                            <View
+                              style={{
+                                flexDirection: 'row',
+                                marginTop: 16,
+                                alignItems: 'center',
+                              }}
+                            >
+                              <TouchableOpacity
+                                onPress={() =>
+                                  arrayHelpers.push({ name: '', quantity: '' })
+                                }
+                              >
+                                <CustomIcon
+                                  name='Plus'
+                                  size={24}
+                                  color={theme.NEUTRAL90_COLOR}
+                                />
+                              </TouchableOpacity>
+
+                              <Text
+                                style={{
+                                  fontFamily: theme.FONT_BOLD,
+                                  fontSize: theme.FONT_SIZE_P,
+                                  color: theme.NEUTRAL90_COLOR,
+                                  marginLeft: 4,
+                                }}
+                              >
+                                Add new Ingredient
+                              </Text>
+                            </View>
+                          ) : (
+                            <View
+                              style={{
+                                flexDirection: 'row',
+                                marginTop: 16,
+                                alignItems: 'center',
+                              }}
+                            >
+                              <TouchableOpacity
+                                disabled={true}
+                                onPress={() =>
+                                  arrayHelpers.push({ name: '', quantity: '' })
+                                }
+                              >
+                                <CustomIcon
+                                  name='Plus'
+                                  size={24}
+                                  color={theme.NEUTRAL90_COLOR}
+                                />
+                              </TouchableOpacity>
+
+                              <Text
+                                style={{
+                                  fontFamily: theme.FONT_BOLD,
+                                  fontSize: theme.FONT_SIZE_P,
+                                  color: theme.NEUTRAL90_COLOR,
+                                  marginLeft: 4,
+                                }}
+                              >
+                                Add new Ingredient
+                              </Text>
+                            </View>
+                          )}
+                        </View>
+                      )}
+                    />
+                  </View>
+                  <TouchableOpacity
+                    style={{
+                      paddingVertical: 16,
+                      paddingHorizontal: 32,
+                      backgroundColor: theme.PRIMARY50_COLOR,
+                      borderRadius: 10,
+                      marginBottom: 110,
+                      marginTop: 10,
+                    }}
+                    onPress={handleSubmit}
+                    disabled={!(isValid && dirty)}
+                  >
+                    <Text
+                      style={{
+                        fontFamily: theme.FONT_BOLD,
+                        fontSize: theme.FONT_SIZE_P,
+                        color: theme.NEUTRAL0_COLOR,
+                        textAlign: 'center',
+                      }}
+                    >
+                      Save my recipes
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              )}
+            </Formik>
+          </View>
+        </ScrollView>
+      </SafeAreaView>
+    );
+  }
+  return layout;
 };
 
 const styles = StyleSheet.create({
