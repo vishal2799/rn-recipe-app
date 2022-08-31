@@ -9,14 +9,27 @@ import {
   Modal,
   Pressable,
 } from 'react-native';
-import React, { Component, useState } from 'react';
+import React, { useRef, useMemo, useCallback } from 'react';
 import CustomIcon from '../../components/CustomIcon/CustomIcon';
 import theme from '../../styles/theme.style';
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
 
 export const RecipeDetail = ({ route, navigation }) => {
   const { data } = route.params;
-  const [modalVisible, setModalVisible] = useState(false);
-  const toggleMore = () => setShow((show) => !show);
+
+  // ref
+  const bottomSheetModalRef = useRef(null);
+
+  // variables
+  const snapPoints = useMemo(() => ['25%', '50%'], []);
+
+  // callbacks
+  const handlePresentModalPress = useCallback(() => {
+    bottomSheetModalRef.current?.present();
+  }, []);
+  const handleSheetChanges = useCallback((index) => {
+    console.log('handleSheetChanges', index);
+  }, []);
 
   function onPress() {
     return navigation.goBack();
@@ -36,51 +49,6 @@ export const RecipeDetail = ({ route, navigation }) => {
             marginBottom: 12,
           }}
         >
-          <Modal
-            animationType='slide'
-            transparent={true}
-            visible={modalVisible}
-            onRequestClose={() => {
-              Alert.alert('Modal has been closed.');
-              setModalVisible(!modalVisible);
-            }}
-          >
-            <View style={styles.centeredView}>
-              <View style={styles.modalView}>
-                <Text style={styles.modalText}>Hello World!</Text>
-                <Pressable
-                  style={[styles.button, styles.buttonClose]}
-                  onPress={() => setModalVisible(!modalVisible)}
-                >
-                  <Text style={styles.textStyle}>Hide Modal</Text>
-                </Pressable>
-              </View>
-            </View>
-          </Modal>
-          <Pressable
-            style={[styles.button, styles.buttonOpen]}
-            onPress={() => setModalVisible(true)}
-          >
-            <Text style={styles.textStyle}>Show Modal</Text>
-          </Pressable>
-
-          {/* {show ? (
-            <View
-              style={{
-                height: 100,
-                width: 100,
-                position: 'absolute',
-                right: 70,
-                top: 50,
-                backgroundColor: 'pink',
-                zIndex: 99,
-              }}
-            >
-              <Text>Hi</Text>
-            </View>
-          ) : (
-            <Text></Text>
-          )} */}
           <View
             style={{
               flexDirection: 'row',
@@ -117,7 +85,7 @@ export const RecipeDetail = ({ route, navigation }) => {
                 alignItems: 'center',
                 justifyContent: 'center',
               }}
-              onPress={toggleMore}
+              onPress={handlePresentModalPress}
             >
               <CustomIcon
                 name='More'
@@ -464,6 +432,16 @@ export const RecipeDetail = ({ route, navigation }) => {
             </View>
           ))}
         </View>
+        <BottomSheetModal
+          ref={bottomSheetModalRef}
+          index={1}
+          snapPoints={snapPoints}
+          onChange={handleSheetChanges}
+        >
+          <View style={{ flex: 1, alignItems: 'center' }}>
+            <Text>Awesome 🎉</Text>
+          </View>
+        </BottomSheetModal>
       </ScrollView>
     </SafeAreaView>
   );

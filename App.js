@@ -1,9 +1,6 @@
 // In App.js in a new project
 import 'react-native-get-random-values';
 import * as React from 'react';
-import { useNavigation } from '@react-navigation/native';
-import { Button, View, Text } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import tw from 'twrnc';
 import AppLoading from 'expo-app-loading';
@@ -12,16 +9,10 @@ import {
   Poppins_400Regular,
   Poppins_700Bold,
 } from '@expo-google-fonts/poppins';
-import CustomIcon from './components/CustomIcon/CustomIcon';
-import OnboardingScreen from './screens/Onboarding/Onboarding';
-import TabsScreen from './components/Tabs/Tabs';
-import HomeScreen from './screens/Home/Home';
-import RecipeDetail from './screens/RecipeDetail/RecipeDetail';
-import Signin from './screens/Signin/Signin';
-import Signup from './screens/Signup/Signup';
-import Search from './screens/Search/Search';
 import RootNavigation from './navigation/index';
 import { decode, encode } from 'base-64';
+import { GestureHandlerRootView } from 'react-native-gesture-handler'; //-->add
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 if (!global.btoa) {
   global.btoa = encode;
 }
@@ -66,35 +57,11 @@ function App() {
     return <AppLoading />;
   }
   return (
-    <RootNavigation />
-    // <NavigationContainer>
-    //   <Stack.Navigator
-    //     screenOptions={{
-    //       headerShown: false,
-    //     }}
-    //   >
-    //     {user ? (
-    //       <>
-    //         <Stack.Screen name='Onboarding' component={OnboardingScreen} />
-    //         <Stack.Screen
-    //           name='Tabs'
-    //           component={TabsScreen}
-    //           //initialParams={{ user: user }}
-    //         />
-    //         {/* {(props) => <TabsScreen {...props} extraData={user} />} */}
-    //         {/* </Stack.Screen> */}
-    //         <Stack.Screen name='RecipeDetail' component={RecipeDetail} />
-    //         <Stack.Screen name='Search' component={Search} />
-    //       </>
-    //     ) : (
-    //       <>
-    //         {/* <Stack.Screen name='Details' component={DetailsScreen} /> */}
-    //         <Stack.Screen name='Signup' component={Signup} />
-    //         <Stack.Screen name='Signin' component={Signin} />
-    //       </>
-    //     )}
-    //   </Stack.Navigator>
-    // </NavigationContainer>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <BottomSheetModalProvider>
+        <RootNavigation />
+      </BottomSheetModalProvider>
+    </GestureHandlerRootView>
   );
 }
 

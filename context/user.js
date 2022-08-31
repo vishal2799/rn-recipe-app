@@ -70,22 +70,21 @@ function UserProvider({ children }) {
 
   async function fetchSavedRecipes() {
     console.log('user saved', userDetails.saved);
-    if (userDetails.saved.length < 0) {
-      return;
+    if (userDetails.saved.length > 0) {
+      const q = query(
+        collection(db, 'recipes'),
+        where('id', 'in', userDetails?.saved)
+      );
+      const docSnap = await getDocs(q);
+      const newRecipes = [];
+      docSnap.forEach((doc) => {
+        const recipe = doc.data();
+        newRecipes.push(recipe);
+        console.log(doc.id, ' => ', doc.data());
+      });
+      setSavedRecipes(newRecipes);
+      console.log('saved recipes', newRecipes);
     }
-    const q = query(
-      collection(db, 'recipes'),
-      where('id', 'in', userDetails?.saved)
-    );
-    const docSnap = await getDocs(q);
-    const newRecipes = [];
-    docSnap.forEach((doc) => {
-      const recipe = doc.data();
-      newRecipes.push(recipe);
-      console.log(doc.id, ' => ', doc.data());
-    });
-    setSavedRecipes(newRecipes);
-    console.log('saved recipes', newRecipes);
   }
 
   async function fetchCreators() {
