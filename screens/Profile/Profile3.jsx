@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useMemo, useRef } from 'react';
 import {
   View,
   Text,
@@ -17,18 +17,19 @@ import Animated, {
 import { Tabs } from 'react-native-collapsible-tab-view';
 import CustomIcon from '../../components/CustomIcon/CustomIcon';
 import theme from '../../styles/theme.style';
-import AvatarImage from '../../assets/images/Avatar3.png';
 import VideoRecipe from '../../components/VideoRecipe/VideoRecipe';
-import { recipeData, recipeData2 } from '../../mockData';
 import ImageRecipe from '../../components/ImageRecipe/ImageRecipe';
 import styles from '../../styles/styles';
 import { UserContext } from '../../context/user';
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
+import { auth } from '../../config/Firebase/firebaseConfig';
+import { signOut } from 'firebase/auth';
 
 const HEADER_HEIGHT = 250;
 const DATA = [0, 1, 2, 3, 4];
 const identity = (v) => v + '';
 
-const Header = ({ profile, loading }) => {
+const Header = ({ profile, loading, onPress }) => {
   let layout;
   if (loading) {
     layout = (
@@ -66,6 +67,7 @@ const Header = ({ profile, loading }) => {
               alignItems: 'center',
               justifyContent: 'center',
             }}
+            onPress={onPress}
           >
             <CustomIcon name='More' size={20} color={theme.NEUTRAL100_COLOR} />
           </TouchableOpacity>
@@ -270,6 +272,20 @@ function MyTabBar2({
 }
 
 const Example = React.forwardRef(({ emptyContacts, ...props }, ref) => {
+  // ref
+  const bottomSheetModalRef = useRef(null);
+
+  // variables
+  const snapPoints = useMemo(() => ['25%', '50%'], []);
+
+  // callbacks
+  const handlePresentModalPress = useCallback(() => {
+    bottomSheetModalRef.current?.present();
+  }, []);
+  const handleSheetChanges = useCallback((index) => {
+    console.log('handleSheetChanges', index);
+  }, []);
+
   const { isLoading, recipes, userDetails } = React.useContext(UserContext);
 
   const renderItem = ({ item }) => <VideoRecipe data={item} />;
@@ -299,35 +315,73 @@ const Example = React.forwardRef(({ emptyContacts, ...props }, ref) => {
   } else {
     console.log(recipes);
     profileLayout = (
-      <Tabs.Container
-        ref={ref}
-        {...props}
-        renderHeader={() => (
-          <Header profile={userDetails} loading={isLoading} />
-        )}
-        renderTabBar={MyTabBar2}
-      >
-        <Tabs.Tab name='Video' label={makeLabel('Video')}>
-          <Tabs.FlatList
-            data={recipes.filter((e) => e.type === 'video')}
-            renderItem={renderItem}
-            keyExtractor={identity}
-            style={{ paddingHorizontal: 20, marginTop: 20, marginBottom: 110 }}
-          />
-        </Tabs.Tab>
-        <Tabs.Tab name='Recipe' label={makeLabel('Recipe')}>
-          {/* <Tabs.ScrollView>
+      <>
+        <Tabs.Container
+          ref={ref}
+          {...props}
+          renderHeader={() => (
+            <Header
+              profile={userDetails}
+              loading={isLoading}
+              onPress={handlePresentModalPress}
+            />
+          )}
+          renderTabBar={MyTabBar2}
+        >
+          <Tabs.Tab name='Video' label={makeLabel('Video')}>
+            <Tabs.FlatList
+              data={recipes.filter((e) => e.type === 'video')}
+              renderItem={renderItem}
+              keyExtractor={identity}
+              style={{
+                paddingHorizontal: 20,
+                marginTop: 20,
+                marginBottom: 110,
+              }}
+            />
+          </Tabs.Tab>
+          <Tabs.Tab name='Recipe' label={makeLabel('Recipe')}>
+            {/* <Tabs.ScrollView>
           <View style={[styles.box, styles.boxA]} />
           <View style={[styles.box, styles.boxB]} />
         </Tabs.ScrollView> */}
-          <Tabs.FlatList
-            data={recipes.filter((e) => e.type === 'recipe')}
-            renderItem={renderItem1}
-            keyExtractor={identity}
-            style={{ paddingHorizontal: 20, marginTop: 20, marginBottom: 20 }}
-          />
-        </Tabs.Tab>
-      </Tabs.Container>
+            <Tabs.FlatList
+              data={recipes.filter((e) => e.type === 'recipe')}
+              renderItem={renderItem1}
+              keyExtractor={identity}
+              style={{ paddingHorizontal: 20, marginTop: 20, marginBottom: 20 }}
+            />
+          </Tabs.Tab>
+        </Tabs.Container>
+        <BottomSheetModal
+          ref={bottomSheetModalRef}
+          index={1}
+          snapPoints={snapPoints}
+          onChange={handleSheetChanges}
+        >
+          <View style={{ flex: 1, alignItems: 'center' }}>
+            <Text>Awesome 🎉</Text>
+            <View>
+              <TouchableOpacity
+                onPress={() => signOut(auth)}
+                style={{
+                  borderColor: 'black',
+                  borderWidth: 1,
+                  paddingVertical: 8,
+                  paddingHorizontal: 20,
+                  borderRadius: 8,
+                  marginTop: 20,
+                  fontSize: theme.FONT_SIZE_H3,
+                  fontFamily: theme.FONT_REGULAR,
+                  color: theme.NEUTRAL40_COLOR,
+                }}
+              >
+                <Text>SignOut</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </BottomSheetModal>
+      </>
     );
   }
 

@@ -83,11 +83,6 @@ const Home = ({ navigation }) => {
         }}
       >
         <ScrollView style={{ backgroundColor: 'white' }}>
-          <View>
-            <TouchableOpacity onPress={() => signOut(auth)}>
-              <Text>SignOut</Text>
-            </TouchableOpacity>
-          </View>
           <View style={styles.HeadingContainer}>
             <Text style={styles.Heading}>Find best recipes for cooking</Text>
           </View>

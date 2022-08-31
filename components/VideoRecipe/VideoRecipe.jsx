@@ -3,14 +3,10 @@ import React, { useEffect } from 'react';
 import theme from '../../styles/theme.style';
 import CustomIcon from '../CustomIcon/CustomIcon';
 import styles from '../../styles/styles';
-import videoImage from '../../assets/images/video.png';
-import personImage from '../../assets/images/Avatar.png';
 import { useNavigation } from '@react-navigation/native';
 import { UserContext } from '../../context/user';
 import { db } from '../../config/Firebase/firebaseConfig';
-import { useAuthentication } from '../../utils/hooks/useAuthentication';
 import { doc, arrayUnion, updateDoc, arrayRemove } from 'firebase/firestore';
-import { onAuthStateChanged, getAuth } from 'firebase/auth';
 
 const VideoRecipe = ({ data, width, mr }) => {
   const navigation = useNavigation();

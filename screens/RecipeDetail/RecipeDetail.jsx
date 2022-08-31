@@ -6,16 +6,19 @@ import {
   Image,
   ScrollView,
   StyleSheet,
-  Modal,
-  Pressable,
 } from 'react-native';
 import React, { useRef, useMemo, useCallback } from 'react';
 import CustomIcon from '../../components/CustomIcon/CustomIcon';
 import theme from '../../styles/theme.style';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
+import { UserContext } from '../../context/user';
+import { doc, arrayUnion, updateDoc, arrayRemove } from 'firebase/firestore';
+import { db } from '../../config/Firebase/firebaseConfig';
 
 export const RecipeDetail = ({ route, navigation }) => {
   const { data } = route.params;
+  const { userDetails, setUserDetails, savedRecipes, setSavedRecipes } =
+    React.useContext(UserContext);
 
   // ref
   const bottomSheetModalRef = useRef(null);
@@ -34,6 +37,47 @@ export const RecipeDetail = ({ route, navigation }) => {
   function onPress() {
     return navigation.goBack();
   }
+
+  let following;
+
+  for (let i = 0; i <= userDetails.following.length; i++) {
+    if (data.userId == userDetails.following[i]) {
+      following = 'Yes';
+    }
+  }
+
+  const onFollow = () => {
+    const docRef = doc(db, 'users', userDetails.userId);
+    if (!following) {
+      updateDoc(docRef, {
+        following: arrayUnion(data.userId),
+      })
+        .then(() => {
+          console.log('following');
+          setUserDetails({
+            ...userDetails,
+            following: [...userDetails.following, data.userId],
+          });
+        })
+        .catch((e) => console.log(e.message));
+    } else {
+      updateDoc(docRef, {
+        following: arrayRemove(data.userId),
+      })
+        .then(() => {
+          console.log('unfollowing');
+          const newFollowing = [...userDetails.following];
+          let indexU = newFollowing.findIndex((item) => item == data.userId);
+          if (indexU != -1) {
+            const newArrayState2 = newFollowing.filter((value, theIndex) => {
+              return indexU !== theIndex;
+            });
+            setUserDetails({ ...userDetails, following: newArrayState2 });
+          }
+        })
+        .catch((e) => console.log(e.message));
+    }
+  };
   return (
     <SafeAreaView
       style={{
@@ -233,25 +277,30 @@ export const RecipeDetail = ({ route, navigation }) => {
                 </View>
               </View>
             </View>
-            <TouchableOpacity
-              style={{
-                paddingVertical: 8,
-                paddingHorizontal: 16,
-                backgroundColor: theme.PRIMARY50_COLOR,
-                borderRadius: 10,
-              }}
-            >
-              <Text
+            {userDetails.userId !== data.userId ? (
+              <TouchableOpacity
                 style={{
-                  fontFamily: theme.FONT_BOLD,
-                  fontSize: theme.FONT_SIZE_LABEL,
-                  color: theme.NEUTRAL0_COLOR,
-                  textAlign: 'center',
+                  paddingVertical: 8,
+                  paddingHorizontal: 16,
+                  backgroundColor: theme.PRIMARY50_COLOR,
+                  borderRadius: 10,
                 }}
+                onPress={() => onFollow()}
               >
-                Follow
-              </Text>
-            </TouchableOpacity>
+                <Text
+                  style={{
+                    fontFamily: theme.FONT_BOLD,
+                    fontSize: theme.FONT_SIZE_LABEL,
+                    color: theme.NEUTRAL0_COLOR,
+                    textAlign: 'center',
+                  }}
+                >
+                  {following ? 'Following' : 'Follow'}
+                </Text>
+              </TouchableOpacity>
+            ) : (
+              <View></View>
+            )}
           </View>
         </View>
 
