@@ -101,7 +101,8 @@ const Header = ({ profile, loading }) => {
                   marginTop: 16,
                 }}
               >
-                {profile?.bio} Hi
+                Hello world I’m {profile?.name}, I’m from {profile?.location} 🇮🇹
+                I love cooking so much!
               </Text>
             </View>
             <TouchableOpacity

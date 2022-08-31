@@ -21,7 +21,7 @@ function Video({ data }) {
       <FlatList
         data={savedRecipes.filter((e) => e.type === 'video')}
         renderItem={renderItem}
-        style={{ marginLeft: 20, marginTop: 20 }}
+        style={{ marginHorizontal: 20, marginTop: 20 }}
       />
     </View>
   );

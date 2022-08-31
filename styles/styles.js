@@ -49,7 +49,7 @@ export default StyleSheet.create({
     fontSize: theme.FONT_SIZE_H5,
   },
   item: {
-    marginRight: 16,
+    //marginRight: 16,
   },
   video: {
     position: 'relative',

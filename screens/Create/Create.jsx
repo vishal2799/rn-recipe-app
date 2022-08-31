@@ -55,9 +55,17 @@ const schema = yup.object().shape({
     .required('Cook time is required'),
 });
 
-export const Create = () => {
-  const { isLoading, categoriesList, userDetails } =
-    React.useContext(UserContext);
+export const Create = ({ navigation }) => {
+  const {
+    isLoading,
+    categoriesList,
+    userDetails,
+    setAllRecipes,
+    allRecipes,
+    recipes,
+    setRecipes,
+  } = React.useContext(UserContext);
+  const [btnDisable, setBtnDisable] = useState(false);
   const [categories, setCategories] = useState(categoriesList);
 
   const [selectedImage, setSelectedImage] = React.useState(null);
@@ -97,7 +105,7 @@ export const Create = () => {
     //   .catch((error) => {
     //     alert(error);
     //   });
-
+    setBtnDisable(true);
     const blob = await new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
       xhr.onload = function () {
@@ -136,7 +144,10 @@ export const Create = () => {
     };
 
     const docRef = await addDoc(collection(db, 'recipes'), data);
-
+    setAllRecipes([...allRecipes, data]);
+    setRecipes([...recipes, data]);
+    setBtnDisable(false);
+    navigation.navigate('Home');
     // const metadata = {
     //   contentType: 'image/jpeg',
     // };
@@ -154,7 +165,6 @@ export const Create = () => {
     //   });
     // });
     console.log(url);
-    console.log(alert(docRef));
   };
 
   function checkIngredient(Ingredients) {
@@ -210,6 +220,7 @@ export const Create = () => {
                   alignItems: 'center',
                   justifyContent: 'center',
                 }}
+                onPress={() => navigation.navigate('Home')}
               >
                 <CustomIcon
                   name='Arrow-Left'
@@ -683,7 +694,7 @@ export const Create = () => {
                       marginTop: 10,
                     }}
                     onPress={handleSubmit}
-                    disabled={!(isValid && dirty)}
+                    disabled={!(isValid && dirty) || btnDisable}
                   >
                     <Text
                       style={{

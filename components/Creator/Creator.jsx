@@ -18,7 +18,7 @@ const Creator = ({ data }) => {
       >
         <Image
           source={{ uri: data.profilePhotoUrl }}
-          style={{ width: 90, height: 100, borderRadius: 50 }}
+          style={{ width: 75, height: 75, borderRadius: 50 }}
         />
         <Text
           style={{

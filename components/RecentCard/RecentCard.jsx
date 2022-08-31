@@ -19,7 +19,7 @@ const RecentCard = ({ data }) => {
         <View>
           <Image
             source={{ uri: data.imageUrl }}
-            style={{ width: 120, height: 100 }}
+            style={{ width: 124, height: 124, borderRadius: 10 }}
           />
           <View style={{ width: '90%', marginTop: 8 }}>
             <Text

@@ -11,14 +11,9 @@ import {
 import { db } from '../config/Firebase/firebaseConfig';
 import { useAuthentication } from '../utils/hooks/useAuthentication';
 
-// Create two context:
-// UserContext: to query the context state
-// UserDispatchContext: to mutate the context state
 const UserContext = createContext(undefined);
 const UserDispatchContext = createContext(undefined);
 
-// A "provider" is used to encapsulate only the
-// components that needs the state in this context
 function UserProvider({ children }) {
   const { user } = useAuthentication();
   const [categoriesList, setCategoriesList] = useState([]);
@@ -29,6 +24,13 @@ function UserProvider({ children }) {
   const [allRecipes, setAllRecipes] = useState([]);
   const [isLoading, setisLoading] = useState(false);
 
+  async function fetchFull() {
+    const userRef = doc(db, 'users', user.uid);
+    const [firstResponse, secondResponse] = await Promise.all([
+      getDoc(userRef),
+    ]);
+  }
+
   async function fetchUser() {
     const docRef = doc(db, 'users', user.uid);
     const docSnap = await getDoc(docRef);
@@ -36,7 +38,7 @@ function UserProvider({ children }) {
     if (docSnap.exists()) {
       console.log('Document data:', docSnap.data());
       setUserDetails({ userId: docSnap.id, ...docSnap.data() });
-      fetchSavedRecipes(docSnap.data().saved);
+      fetchSavedRecipes();
     } else {
       // doc.data() will be undefined in this case
       console.log('No such document!');

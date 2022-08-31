@@ -133,7 +133,7 @@ export const RecipeDetail = ({ route, navigation }) => {
               color: theme.NEUTRAL90_COLOR,
             }}
           >
-            {data.recipeTitle}
+            {data.title}
           </Text>
         </View>
         <View
@@ -141,38 +141,42 @@ export const RecipeDetail = ({ route, navigation }) => {
         >
           <View>
             <Image
-              source={data.recipeImage}
-              style={{ width: '100%', borderRadius: 10 }}
+              source={{ uri: data.imageUrl }}
+              style={{ width: '100%', height: 200, borderRadius: 10 }}
             />
-            <View
-              style={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}
-            >
-              <TouchableOpacity
+            {data.type == 'video' ? (
+              <View
                 style={{
-                  width: 48,
-                  height: 48,
-                  backgroundColor: theme.NEUTRAL50_COLOR,
-                  borderRadius: 48,
-                  display: 'flex',
-                  alignItems: 'center',
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
                   justifyContent: 'center',
+                  alignItems: 'center',
                 }}
               >
-                <CustomIcon
-                  name='Play'
-                  size={20}
-                  color={theme.NEUTRAL0_COLOR}
-                />
-              </TouchableOpacity>
-            </View>
+                <TouchableOpacity
+                  style={{
+                    width: 48,
+                    height: 48,
+                    backgroundColor: theme.NEUTRAL50_COLOR,
+                    borderRadius: 48,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <CustomIcon
+                    name='Play'
+                    size={20}
+                    color={theme.NEUTRAL0_COLOR}
+                  />
+                </TouchableOpacity>
+              </View>
+            ) : (
+              <View></View>
+            )}
           </View>
           <View
             style={{
@@ -191,7 +195,7 @@ export const RecipeDetail = ({ route, navigation }) => {
                 marginLeft: 4,
               }}
             >
-              {data.rating}
+              4, 5
             </Text>
             <Text
               style={{
@@ -200,7 +204,7 @@ export const RecipeDetail = ({ route, navigation }) => {
                 color: theme.NEUTRAL40_COLOR,
               }}
             >
-              ( {data.reviews} reviews )
+              ( 200 reviews )
             </Text>
           </View>
           <View
@@ -219,7 +223,10 @@ export const RecipeDetail = ({ route, navigation }) => {
                   })
                 }
               >
-                <Image source={data.personImage} />
+                <Image
+                  source={{ uri: data.authorPhoto }}
+                  style={{ width: 40, height: 40, borderRadius: 50 }}
+                />
               </TouchableOpacity>
               <View style={{ marginLeft: 10 }}>
                 <TouchableOpacity
@@ -236,7 +243,7 @@ export const RecipeDetail = ({ route, navigation }) => {
                       color: theme.NEUTRAL100_COLOR,
                     }}
                   >
-                    {data.personName}
+                    {data.authorName}
                   </Text>
                 </TouchableOpacity>
                 <View style={{ flexDirection: 'row' }}>
@@ -253,7 +260,7 @@ export const RecipeDetail = ({ route, navigation }) => {
                       marginLeft: 4,
                     }}
                   >
-                    {data.personLocation}
+                    {data.location}
                   </Text>
                 </View>
               </View>
@@ -279,7 +286,119 @@ export const RecipeDetail = ({ route, navigation }) => {
             </TouchableOpacity>
           </View>
         </View>
+
         <View style={{ paddingHorizontal: 20, paddingVertical: 12 }}>
+          <View
+            style={{
+              marginTop: 12,
+              borderRadius: 12,
+              backgroundColor: theme.NEUTRAL10_COLOR,
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              paddingHorizontal: 16,
+              paddingVertical: 12,
+            }}
+          >
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <CustomIcon
+                name='Clock'
+                size={20}
+                color={theme.PRIMARY50_COLOR}
+                style={{
+                  padding: 8,
+                  backgroundColor: theme.NEUTRAL0_COLOR,
+                  borderRadius: 10,
+                }}
+              />
+              <Text
+                style={{
+                  fontFamily: theme.FONT_BOLD,
+                  fontSize: theme.FONT_SIZE_P,
+                  color: theme.NEUTRAL90_COLOR,
+                  marginLeft: 16,
+                }}
+              >
+                Cook time
+              </Text>
+            </View>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <Text
+                style={{
+                  fontFamily: theme.FONT_REGULAR,
+                  fontSize: theme.FONT_SIZE_LABEL,
+                  color: theme.NEUTRAL40_COLOR,
+                  marginRight: 8,
+                }}
+              >
+                {data.cookTime}
+              </Text>
+
+              <TouchableOpacity style={{ marginLeft: 10 }}>
+                <CustomIcon
+                  name='Arrow-Right'
+                  size={24}
+                  color={theme.NEUTRAL100_COLOR}
+                />
+              </TouchableOpacity>
+            </View>
+          </View>
+          <View
+            style={{
+              marginTop: 12,
+              borderRadius: 12,
+              backgroundColor: theme.NEUTRAL10_COLOR,
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              paddingHorizontal: 16,
+              paddingVertical: 12,
+              marginBottom: 20,
+            }}
+          >
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <CustomIcon
+                name='Clock'
+                size={20}
+                color={theme.PRIMARY50_COLOR}
+                style={{
+                  padding: 8,
+                  backgroundColor: theme.NEUTRAL0_COLOR,
+                  borderRadius: 10,
+                }}
+              />
+              <Text
+                style={{
+                  fontFamily: theme.FONT_BOLD,
+                  fontSize: theme.FONT_SIZE_P,
+                  color: theme.NEUTRAL90_COLOR,
+                  marginLeft: 16,
+                }}
+              >
+                Serves
+              </Text>
+            </View>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <Text
+                style={{
+                  fontFamily: theme.FONT_REGULAR,
+                  fontSize: theme.FONT_SIZE_LABEL,
+                  color: theme.NEUTRAL40_COLOR,
+                  marginRight: 8,
+                }}
+              >
+                {data.serves}
+              </Text>
+
+              <TouchableOpacity style={{ marginLeft: 10 }}>
+                <CustomIcon
+                  name='Arrow-Right'
+                  size={24}
+                  color={theme.NEUTRAL100_COLOR}
+                />
+              </TouchableOpacity>
+            </View>
+          </View>
           <View
             style={{
               flexDirection: 'row',
@@ -304,7 +423,7 @@ export const RecipeDetail = ({ route, navigation }) => {
                 color: theme.NEUTRAL40_COLOR,
               }}
             >
-              5 Items
+              {data.ingredients.length} Items
             </Text>
           </View>
           {data.ingredients.map((e) => (

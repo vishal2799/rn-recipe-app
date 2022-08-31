@@ -41,7 +41,9 @@ const Home = ({ navigation }) => {
     return <View style={{ height: 1, backgroundColor: '#f1f1f1' }} />;
   };
 
-  const renderItem = ({ item }) => <VideoRecipe data={item} />;
+  const renderItem = ({ item }) => (
+    <VideoRecipe data={item} width={280} mr={16} />
+  );
   const renderRecentItem = ({ item }) => <RecentCard data={item} />;
 
   const renderItem3 = ({ item }) => <PopularCard data={item} />;

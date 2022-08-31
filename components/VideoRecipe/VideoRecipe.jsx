@@ -12,8 +12,11 @@ import { useAuthentication } from '../../utils/hooks/useAuthentication';
 import { doc, arrayUnion, updateDoc, arrayRemove } from 'firebase/firestore';
 import { onAuthStateChanged, getAuth } from 'firebase/auth';
 
-const VideoRecipe = ({ data }) => {
-  const { userDetails, isLoading } = React.useContext(UserContext);
+const VideoRecipe = ({ data, width, mr }) => {
+  const navigation = useNavigation();
+
+  const { userDetails, setUserDetails, savedRecipes, setSavedRecipes } =
+    React.useContext(UserContext);
   //  const navigation = useNavigation();
 
   function timeConvert(n) {
@@ -41,22 +44,54 @@ const VideoRecipe = ({ data }) => {
   }
 
   const onSave = () => {
-    if (userDetails.userId == data.userId) {
-      console.log('cant');
-      return;
-    }
     const docRef = doc(db, 'users', userDetails.userId);
     if (!saved) {
       updateDoc(docRef, {
         saved: arrayUnion(data.id),
       })
-        .then(() => console.log('saved added'))
+        .then(() => {
+          console.log('saved added');
+          setUserDetails({
+            ...userDetails,
+            saved: [...userDetails.saved, data.id],
+          });
+          setSavedRecipes([...savedRecipes, data]);
+          console.log(savedRecipes);
+        })
         .catch((e) => console.log(e.message));
     } else {
       updateDoc(docRef, {
         saved: arrayRemove(data.id),
       })
-        .then(() => console.log('saved deleted'))
+        .then(() => {
+          console.log('saved deleted');
+          const svRecipes = [...savedRecipes];
+          let index = svRecipes.findIndex((item) => item.id == data.id);
+          if (index != -1) {
+            const newArrayState = svRecipes.filter((value, theIndex) => {
+              return index !== theIndex;
+            });
+            setSavedRecipes(newArrayState);
+          }
+          const newSaved = [...userDetails.saved];
+          let indexU = newSaved.findIndex((item) => item == data.id);
+          if (indexU != -1) {
+            const newArrayState2 = newSaved.filter((value, theIndex) => {
+              return indexU !== theIndex;
+            });
+            setUserDetails({ ...userDetails, saved: newArrayState2 });
+          }
+
+          // setUserDetails({
+          //   ...userDetails,
+          //   saved: userDetails.saved.filter((e) => e !== data.id),
+          // });
+          // setSavedRecipes((current) =>
+          //   current.filter((e) => {
+          //     return e !== data.id;
+          //   })
+          // );
+        })
         .catch((e) => console.log(e.message));
     }
   };
@@ -65,11 +100,15 @@ const VideoRecipe = ({ data }) => {
     // <View style={{ width: '100%', height: 100 }}>
     //   <Text>Video Recipe</Text>
     // </View>
-    <View style={styles.item}>
+    <View style={{ marginRight: mr ? mr : 0 }}>
       <View style={styles.video}>
         <Image
           source={{ uri: data.imageUrl }}
-          style={{ width: 200, height: 180 }}
+          style={{
+            width: width ? width : '100%',
+            height: 180,
+            borderRadius: 10,
+          }}
         />
         <View style={styles.duration}>
           <Text
@@ -122,35 +161,39 @@ const VideoRecipe = ({ data }) => {
               alignItems: 'center',
               justifyContent: 'center',
             }}
-            // onPress={() =>
-            //   navigation.navigate('RecipeDetail', {
-            //     data: data,
-            //   })
-            // }
+            onPress={() =>
+              navigation.navigate('RecipeDetail', {
+                data: data,
+              })
+            }
           >
             <CustomIcon name='Play' size={20} color={theme.NEUTRAL0_COLOR} />
           </TouchableOpacity>
         </View>
-        <View style={styles.save}>
-          <TouchableOpacity
-            style={{
-              width: 32,
-              height: 32,
-              backgroundColor: theme.NEUTRAL0_COLOR,
-              borderRadius: 32,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-            onPress={() => onSave()}
-          >
-            <CustomIcon
-              name='Bookmark'
-              size={20}
-              color={saved ? theme.PRIMARY50_COLOR : ''}
-            />
-          </TouchableOpacity>
-        </View>
+        {userDetails.userId !== data.userId ? (
+          <View style={styles.save}>
+            <TouchableOpacity
+              style={{
+                width: 32,
+                height: 32,
+                backgroundColor: theme.NEUTRAL0_COLOR,
+                borderRadius: 32,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+              onPress={() => onSave()}
+            >
+              <CustomIcon
+                name='Bookmark'
+                size={20}
+                color={saved ? theme.PRIMARY50_COLOR : theme.NEUTRAL90_COLOR}
+              />
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <View></View>
+        )}
       </View>
       <View
         style={{
@@ -198,7 +241,7 @@ const VideoRecipe = ({ data }) => {
         >
           <Image
             source={{ uri: data.authorPhoto }}
-            style={{ width: 30, height: 30, borderRadius: 20 }}
+            style={{ width: 32, height: 32, borderRadius: 50 }}
           />
         </TouchableOpacity>
         <TouchableOpacity

@@ -4,25 +4,36 @@ import theme from '../../styles/theme.style';
 import CustomIcon from '../CustomIcon/CustomIcon';
 import styles from '../../styles/styles';
 import videoImage2 from '../../assets/images/video2.png';
+import { useNavigation } from '@react-navigation/native';
 
 const ImageRecipe = ({ data }) => {
+  const navigation = useNavigation();
+
   return (
-    <View style={styles.item2}>
+    <View>
       <View style={styles.video2}>
         <Image
           source={{ uri: data.imageUrl }}
-          style={{ width: 200, height: 200 }}
+          style={{ width: '100%', height: 200, borderRadius: 10 }}
         />
         <View style={styles.details}>
-          <Text
-            style={{
-              fontFamily: theme.FONT_BOLD,
-              fontSize: theme.FONT_SIZE_P,
-              color: theme.NEUTRAL0_COLOR,
-            }}
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate('RecipeDetail', {
+                data: data,
+              })
+            }
           >
-            {data.title}
-          </Text>
+            <Text
+              style={{
+                fontFamily: theme.FONT_BOLD,
+                fontSize: theme.FONT_SIZE_P,
+                color: theme.NEUTRAL0_COLOR,
+              }}
+            >
+              {data.title}
+            </Text>
+          </TouchableOpacity>
           <Text
             style={{
               fontFamily: theme.FONT_REGULAR,
