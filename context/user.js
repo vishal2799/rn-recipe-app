@@ -23,6 +23,8 @@ function UserProvider({ children }) {
   const { user } = useAuthentication();
   const [categoriesList, setCategoriesList] = useState([]);
   const [userDetails, setUserDetails] = useState({});
+  const [newUserDetails, setNewUserDetails] = useState({});
+  const [newRecipes, setNewRecipes] = useState([]);
   const [recipes, setRecipes] = useState([]);
   const [savedRecipes, setSavedRecipes] = useState([]);
   const [creators, setCreators] = useState([]);
@@ -34,12 +36,28 @@ function UserProvider({ children }) {
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
-      console.log('Document data:', docSnap.data());
       setUserDetails({ userId: docSnap.id, ...docSnap.data() });
       fetchSavedRecipes(docSnap.data().saved);
     } else {
       // doc.data() will be undefined in this case
       console.log('No such document!');
+    }
+  }
+
+  async function fetchNewUser(userId) {
+    setisLoading(true);
+    const docRef = doc(db, 'users', userId);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      console.log('Document data:', docSnap.data());
+      setNewUserDetails({ userId: docSnap.id, ...docSnap.data() });
+
+      setisLoading(false);
+    } else {
+      // doc.data() will be undefined in this case
+      console.log('No such document!');
+      setisLoading(false);
     }
   }
 
@@ -50,7 +68,6 @@ function UserProvider({ children }) {
     querySnapshot.forEach((doc) => {
       const category = doc.data();
       newCategories.push(category);
-      console.log(category.name);
     });
     setCategoriesList(newCategories);
   }
@@ -62,14 +79,11 @@ function UserProvider({ children }) {
     docSnap.forEach((doc) => {
       const recipe = doc.data();
       newRecipes.push(recipe);
-      console.log(doc.id, ' => ', doc.data());
     });
     setRecipes(newRecipes);
-    console.log('user recipes', newRecipes);
   }
 
   async function fetchSavedRecipes() {
-    console.log('user saved', userDetails.saved);
     if (userDetails.saved.length > 0) {
       const q = query(
         collection(db, 'recipes'),
@@ -80,10 +94,8 @@ function UserProvider({ children }) {
       docSnap.forEach((doc) => {
         const recipe = doc.data();
         newRecipes.push(recipe);
-        console.log(doc.id, ' => ', doc.data());
       });
       setSavedRecipes(newRecipes);
-      console.log('saved recipes', newRecipes);
     }
   }
 
@@ -97,7 +109,6 @@ function UserProvider({ children }) {
     docSnap.forEach((doc) => {
       const user = doc.data();
       newUsers.push(user);
-      console.log(doc.id, ' => ', doc.data());
     });
     setCreators(newUsers);
   }
@@ -109,10 +120,8 @@ function UserProvider({ children }) {
     docSnap.forEach((doc) => {
       const recipe = doc.data();
       newRecipes.push(recipe);
-      console.log(doc.id, ' => ', doc.data());
     });
     setAllRecipes(newRecipes);
-    console.log('user recipes', newRecipes);
   }
 
   async function fetchAll() {
@@ -144,6 +153,10 @@ function UserProvider({ children }) {
         setAllRecipes,
         setRecipes,
         setUserDetails,
+        setisLoading,
+        newUserDetails,
+        newRecipes,
+        fetchNewUser,
       }}
     >
       <UserDispatchContext.Provider value={setUserDetails}>

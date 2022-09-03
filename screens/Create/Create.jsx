@@ -7,6 +7,7 @@ import {
   ScrollView,
   StyleSheet,
   TextInput,
+  useColorScheme,
 } from 'react-native';
 import React, { Component, useState, useEffect } from 'react';
 import CustomIcon from '../../components/CustomIcon/CustomIcon';
@@ -30,6 +31,8 @@ import { v4 as uuid } from 'uuid';
 import { Picker } from '@react-native-picker/picker';
 import NumericInput from 'react-native-numeric-input';
 import { UserContext } from '../../context/user';
+import { StatusBar } from 'expo-status-bar';
+
 const schema = yup.object().shape({
   ingredients: yup
     .array()
@@ -65,6 +68,8 @@ export const Create = ({ navigation }) => {
     recipes,
     setRecipes,
   } = React.useContext(UserContext);
+  const colorScheme = useColorScheme();
+
   const [btnDisable, setBtnDisable] = useState(false);
   const [categories, setCategories] = useState(categoriesList);
 
@@ -195,10 +200,16 @@ export const Create = ({ navigation }) => {
       <SafeAreaView
         style={{
           flex: 1,
-          backgroundColor: 'white',
+          backgroundColor:
+            colorScheme === 'light' ? 'white' : theme.NEUTRAL100_COLOR,
         }}
       >
-        <ScrollView style={{ backgroundColor: 'white' }}>
+        <ScrollView
+          style={{
+            backgroundColor:
+              colorScheme === 'light' ? 'white' : theme.NEUTRAL100_COLOR,
+          }}
+        >
           <View
             style={{ paddingHorizontal: 20, marginTop: 30, marginBottom: 12 }}
           >
@@ -214,7 +225,10 @@ export const Create = ({ navigation }) => {
                 style={{
                   width: 32,
                   height: 32,
-                  backgroundColor: theme.NEUTRAL0_COLOR,
+                  backgroundColor:
+                    colorScheme === 'light'
+                      ? theme.NEUTRAL0_COLOR
+                      : theme.NEUTRAL90_COLOR,
                   borderRadius: 32,
                   display: 'flex',
                   alignItems: 'center',
@@ -225,14 +239,21 @@ export const Create = ({ navigation }) => {
                 <CustomIcon
                   name='Arrow-Left'
                   size={20}
-                  color={theme.NEUTRAL100_COLOR}
+                  color={
+                    colorScheme === 'light'
+                      ? theme.NEUTRAL100_COLOR
+                      : theme.NEUTRAL0_COLOR
+                  }
                 />
               </TouchableOpacity>
               <TouchableOpacity
                 style={{
                   width: 32,
                   height: 32,
-                  backgroundColor: theme.NEUTRAL0_COLOR,
+                  backgroundColor:
+                    colorScheme === 'light'
+                      ? theme.NEUTRAL0_COLOR
+                      : theme.NEUTRAL90_COLOR,
                   borderRadius: 32,
                   display: 'flex',
                   alignItems: 'center',
@@ -242,7 +263,11 @@ export const Create = ({ navigation }) => {
                 <CustomIcon
                   name='More'
                   size={20}
-                  color={theme.NEUTRAL100_COLOR}
+                  color={
+                    colorScheme === 'light'
+                      ? theme.NEUTRAL100_COLOR
+                      : theme.NEUTRAL0_COLOR
+                  }
                 />
               </TouchableOpacity>
             </View>
@@ -250,7 +275,10 @@ export const Create = ({ navigation }) => {
               style={{
                 fontFamily: theme.FONT_BOLD,
                 fontSize: theme.FONT_SIZE_H4,
-                color: theme.NEUTRAL90_COLOR,
+                color:
+                  colorScheme === 'light'
+                    ? theme.NEUTRAL90_COLOR
+                    : theme.NEUTRAL0_COLOR,
               }}
             >
               Create Recipe
@@ -368,7 +396,12 @@ export const Create = ({ navigation }) => {
                     <TextInput
                       name='title'
                       placeholder='Enter recipe title'
-                      style={styles.textInput}
+                      placeholderTextColor={
+                        colorScheme === 'light'
+                          ? theme.NEUTRAL0_COLOR
+                          : theme.NEUTRAL0_COLOR
+                      }
+                      style={[styles.textInput]}
                       onChangeText={handleChange('title')}
                       onBlur={handleBlur('title')}
                       value={values.title}
@@ -383,7 +416,10 @@ export const Create = ({ navigation }) => {
                       style={{
                         marginTop: 12,
                         borderRadius: 12,
-                        backgroundColor: theme.NEUTRAL10_COLOR,
+                        backgroundColor:
+                          colorScheme === 'light'
+                            ? theme.NEUTRAL10_COLOR
+                            : theme.NEUTRAL90_COLOR,
                         flexDirection: 'row',
                         justifyContent: 'space-between',
                         alignItems: 'center',
@@ -400,7 +436,10 @@ export const Create = ({ navigation }) => {
                           color={theme.PRIMARY50_COLOR}
                           style={{
                             padding: 8,
-                            backgroundColor: theme.NEUTRAL0_COLOR,
+                            backgroundColor:
+                              colorScheme === 'light'
+                                ? theme.NEUTRAL0_COLOR
+                                : theme.NEUTRAL100_COLOR,
                             borderRadius: 10,
                           }}
                         />
@@ -408,7 +447,10 @@ export const Create = ({ navigation }) => {
                           style={{
                             fontFamily: theme.FONT_BOLD,
                             fontSize: theme.FONT_SIZE_P,
-                            color: theme.NEUTRAL90_COLOR,
+                            color:
+                              colorScheme === 'light'
+                                ? theme.NEUTRAL90_COLOR
+                                : theme.NEUTRAL10_COLOR,
                             marginLeft: 16,
                           }}
                         >
@@ -441,7 +483,11 @@ export const Create = ({ navigation }) => {
                           <CustomIcon
                             name='Arrow-Right'
                             size={24}
-                            color={theme.NEUTRAL100_COLOR}
+                            color={
+                              colorScheme === 'light'
+                                ? theme.NEUTRAL100_COLOR
+                                : theme.NEUTRAL0_COLOR
+                            }
                           />
                         </TouchableOpacity>
                       </View>
@@ -453,7 +499,10 @@ export const Create = ({ navigation }) => {
                       style={{
                         marginTop: 12,
                         borderRadius: 12,
-                        backgroundColor: theme.NEUTRAL10_COLOR,
+                        backgroundColor:
+                          colorScheme === 'light'
+                            ? theme.NEUTRAL10_COLOR
+                            : theme.NEUTRAL90_COLOR,
                         flexDirection: 'row',
                         justifyContent: 'space-between',
                         alignItems: 'center',
@@ -470,7 +519,10 @@ export const Create = ({ navigation }) => {
                           color={theme.PRIMARY50_COLOR}
                           style={{
                             padding: 8,
-                            backgroundColor: theme.NEUTRAL0_COLOR,
+                            backgroundColor:
+                              colorScheme === 'light'
+                                ? theme.NEUTRAL0_COLOR
+                                : theme.NEUTRAL100_COLOR,
                             borderRadius: 10,
                           }}
                         />
@@ -478,7 +530,10 @@ export const Create = ({ navigation }) => {
                           style={{
                             fontFamily: theme.FONT_BOLD,
                             fontSize: theme.FONT_SIZE_P,
-                            color: theme.NEUTRAL90_COLOR,
+                            color:
+                              colorScheme === 'light'
+                                ? theme.NEUTRAL90_COLOR
+                                : theme.NEUTRAL10_COLOR,
                             marginLeft: 16,
                           }}
                         >
@@ -511,7 +566,11 @@ export const Create = ({ navigation }) => {
                           <CustomIcon
                             name='Arrow-Right'
                             size={24}
-                            color={theme.NEUTRAL100_COLOR}
+                            color={
+                              colorScheme === 'light'
+                                ? theme.NEUTRAL100_COLOR
+                                : theme.NEUTRAL0_COLOR
+                            }
                           />
                         </TouchableOpacity>
                       </View>
@@ -524,6 +583,12 @@ export const Create = ({ navigation }) => {
                     <Picker
                       selectedValue={values.type}
                       onValueChange={handleChange('type')}
+                      style={{
+                        color:
+                          colorScheme === 'light'
+                            ? theme.NEUTRAL0_COLOR
+                            : theme.NEUTRAL0_COLOR,
+                      }}
                     >
                       <Picker.Item label='Video' value='video' />
                       <Picker.Item label='Recipe' value='recipe' />
@@ -533,6 +598,12 @@ export const Create = ({ navigation }) => {
                     <Picker
                       selectedValue={values.categories}
                       onValueChange={handleChange('categories')}
+                      style={{
+                        color:
+                          colorScheme === 'light'
+                            ? theme.NEUTRAL0_COLOR
+                            : theme.NEUTRAL0_COLOR,
+                      }}
                     >
                       {categories.map((e) => (
                         <Picker.Item label={e.name} value={e.name} />
@@ -549,7 +620,10 @@ export const Create = ({ navigation }) => {
                       style={{
                         fontFamily: theme.FONT_BOLD,
                         fontSize: theme.FONT_SIZE_H5,
-                        color: theme.NEUTRAL100_COLOR,
+                        color:
+                          colorScheme === 'light'
+                            ? theme.NEUTRAL100_COLOR
+                            : theme.NEUTRAL0_COLOR,
                       }}
                     >
                       Ingredients
@@ -578,6 +652,11 @@ export const Create = ({ navigation }) => {
                                   onChangeText={handleChange(
                                     `ingredients[${index}].name`
                                   )}
+                                  placeholderTextColor={
+                                    colorScheme === 'light'
+                                      ? theme.NEUTRAL0_COLOR
+                                      : theme.NEUTRAL0_COLOR
+                                  }
                                   onBlur={handleBlur(
                                     `ingredients[${index}].name`
                                   )}
@@ -600,6 +679,11 @@ export const Create = ({ navigation }) => {
                                   onBlur={handleBlur(
                                     `ingredients[${index}].quantity`
                                   )}
+                                  placeholderTextColor={
+                                    colorScheme === 'light'
+                                      ? theme.NEUTRAL0_COLOR
+                                      : theme.NEUTRAL0_COLOR
+                                  }
                                   value={values.ingredients[index].quantity}
                                   placeholder='Quantity'
                                   style={styles.SearchField}
@@ -640,7 +724,10 @@ export const Create = ({ navigation }) => {
                                 style={{
                                   fontFamily: theme.FONT_BOLD,
                                   fontSize: theme.FONT_SIZE_P,
-                                  color: theme.NEUTRAL90_COLOR,
+                                  color:
+                                    colorScheme === 'light'
+                                      ? theme.NEUTRAL90_COLOR
+                                      : theme.NEUTRAL0_COLOR,
                                   marginLeft: 4,
                                 }}
                               >
@@ -664,7 +751,11 @@ export const Create = ({ navigation }) => {
                                 <CustomIcon
                                   name='Plus'
                                   size={24}
-                                  color={theme.NEUTRAL90_COLOR}
+                                  color={
+                                    colorScheme === 'light'
+                                      ? theme.NEUTRAL90_COLOR
+                                      : theme.NEUTRAL0_COLOR
+                                  }
                                 />
                               </TouchableOpacity>
 
@@ -672,7 +763,10 @@ export const Create = ({ navigation }) => {
                                 style={{
                                   fontFamily: theme.FONT_BOLD,
                                   fontSize: theme.FONT_SIZE_P,
-                                  color: theme.NEUTRAL90_COLOR,
+                                  color:
+                                    colorScheme === 'light'
+                                      ? theme.NEUTRAL90_COLOR
+                                      : theme.NEUTRAL0_COLOR,
                                   marginLeft: 4,
                                 }}
                               >

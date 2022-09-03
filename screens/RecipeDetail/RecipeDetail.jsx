@@ -6,7 +6,9 @@ import {
   Image,
   ScrollView,
   StyleSheet,
+  useColorScheme,
 } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
 import React, { useRef, useMemo, useCallback } from 'react';
 import CustomIcon from '../../components/CustomIcon/CustomIcon';
 import theme from '../../styles/theme.style';
@@ -16,9 +18,13 @@ import { doc, arrayUnion, updateDoc, arrayRemove } from 'firebase/firestore';
 import { db } from '../../config/Firebase/firebaseConfig';
 
 export const RecipeDetail = ({ route, navigation }) => {
+  const colorScheme = useColorScheme();
   const { data } = route.params;
   const { userDetails, setUserDetails, savedRecipes, setSavedRecipes } =
     React.useContext(UserContext);
+
+  const themeContainerStyle =
+    colorScheme === 'light' ? theme.NEUTRAL0_COLOR : theme.NEUTRAL90_COLOR;
 
   // ref
   const bottomSheetModalRef = useRef(null);
@@ -79,168 +85,181 @@ export const RecipeDetail = ({ route, navigation }) => {
     }
   };
   return (
-    <SafeAreaView
-      style={{
-        flex: 1,
-        backgroundColor: 'white',
-      }}
-    >
-      <ScrollView style={{ backgroundColor: 'white' }}>
-        <View
+    <>
+      <SafeAreaView
+        style={{
+          flex: 1,
+          backgroundColor: 'white',
+        }}
+      >
+        <ScrollView
           style={{
-            paddingHorizontal: 20,
-            marginTop: 30,
-            marginBottom: 12,
+            backgroundColor:
+              colorScheme === 'light' ? 'white' : theme.NEUTRAL100_COLOR,
           }}
         >
           <View
             style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              marginBottom: 16,
+              paddingHorizontal: 20,
+              marginTop: 35,
+              marginBottom: 12,
             }}
           >
-            <TouchableOpacity
+            <View
               style={{
-                width: 32,
-                height: 32,
-                backgroundColor: theme.NEUTRAL0_COLOR,
-                borderRadius: 32,
-                display: 'flex',
+                flexDirection: 'row',
+                justifyContent: 'space-between',
                 alignItems: 'center',
-                justifyContent: 'center',
+                marginBottom: 16,
               }}
-              onPress={onPress}
             >
-              <CustomIcon
-                name='Arrow-Left'
-                size={20}
-                color={theme.NEUTRAL100_COLOR}
-              />
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={{
-                width: 32,
-                height: 32,
-                backgroundColor: theme.NEUTRAL0_COLOR,
-                borderRadius: 32,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-              onPress={handlePresentModalPress}
-            >
-              <CustomIcon
-                name='More'
-                size={20}
-                color={theme.NEUTRAL100_COLOR}
-              />
-            </TouchableOpacity>
-          </View>
-          <Text
-            style={{
-              fontFamily: theme.FONT_BOLD,
-              fontSize: theme.FONT_SIZE_H4,
-              color: theme.NEUTRAL90_COLOR,
-            }}
-          >
-            {data.title}
-          </Text>
-        </View>
-        <View
-          style={{ paddingHorizontal: 20, paddingBottom: 14, paddingTop: 12 }}
-        >
-          <View>
-            <Image
-              source={{ uri: data.imageUrl }}
-              style={{ width: '100%', height: 200, borderRadius: 10 }}
-            />
-            {data.type == 'video' ? (
-              <View
+              <TouchableOpacity
                 style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  justifyContent: 'center',
+                  width: 32,
+                  height: 32,
+                  backgroundColor:
+                    colorScheme === 'light'
+                      ? theme.NEUTRAL0_COLOR
+                      : theme.NEUTRAL90_COLOR,
+                  borderRadius: 32,
+                  display: 'flex',
                   alignItems: 'center',
+                  justifyContent: 'center',
                 }}
+                onPress={onPress}
               >
-                <TouchableOpacity
-                  style={{
-                    width: 48,
-                    height: 48,
-                    backgroundColor: theme.NEUTRAL50_COLOR,
-                    borderRadius: 48,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                >
-                  <CustomIcon
-                    name='Play'
-                    size={20}
-                    color={theme.NEUTRAL0_COLOR}
-                  />
-                </TouchableOpacity>
-              </View>
-            ) : (
-              <View></View>
-            )}
-          </View>
-          <View
-            style={{
-              marginTop: 16,
-              flexDirection: 'row',
-              alignItems: 'center',
-            }}
-          >
-            <CustomIcon name='Star' color={theme.RATING100_COLOR} size={12} />
+                <CustomIcon
+                  name='Arrow-Left'
+                  size={20}
+                  color={
+                    colorScheme === 'light'
+                      ? theme.NEUTRAL100_COLOR
+                      : theme.NEUTRAL0_COLOR
+                  }
+                />
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={{
+                  width: 32,
+                  height: 32,
+                  backgroundColor:
+                    colorScheme === 'light'
+                      ? theme.NEUTRAL0_COLOR
+                      : theme.NEUTRAL90_COLOR,
+                  borderRadius: 32,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+                onPress={handlePresentModalPress}
+              >
+                <CustomIcon
+                  name='More'
+                  size={20}
+                  color={
+                    colorScheme === 'light'
+                      ? theme.NEUTRAL100_COLOR
+                      : theme.NEUTRAL0_COLOR
+                  }
+                />
+              </TouchableOpacity>
+            </View>
             <Text
               style={{
                 fontFamily: theme.FONT_BOLD,
-                fontSize: theme.FONT_SIZE_LABEL,
-                color: theme.NEUTRAL90_COLOR,
-                marginRight: 7,
-                marginLeft: 4,
+                fontSize: theme.FONT_SIZE_H4,
+                color:
+                  colorScheme === 'light'
+                    ? theme.NEUTRAL90_COLOR
+                    : theme.NEUTRAL0_COLOR,
               }}
             >
-              4, 5
-            </Text>
-            <Text
-              style={{
-                fontFamily: theme.FONT_REGULAR,
-                fontSize: theme.FONT_SIZE_LABEL,
-                color: theme.NEUTRAL40_COLOR,
-              }}
-            >
-              ( 200 reviews )
+              {data.title}
             </Text>
           </View>
           <View
-            style={{
-              marginTop: 16,
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-            }}
+            style={{ paddingHorizontal: 20, paddingBottom: 14, paddingTop: 12 }}
           >
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <TouchableOpacity
-                onPress={() =>
-                  navigation.navigate('Profile', {
-                    id: data.personId,
-                  })
-                }
+            <View>
+              <Image
+                source={{ uri: data.imageUrl }}
+                style={{ width: '100%', height: 200, borderRadius: 10 }}
+              />
+              {data.type == 'video' ? (
+                <View
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}
+                >
+                  <TouchableOpacity
+                    style={{
+                      width: 48,
+                      height: 48,
+                      backgroundColor: theme.NEUTRAL50_COLOR,
+                      borderRadius: 48,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}
+                  >
+                    <CustomIcon
+                      name='Play'
+                      size={20}
+                      color={theme.NEUTRAL0_COLOR}
+                    />
+                  </TouchableOpacity>
+                </View>
+              ) : (
+                <View></View>
+              )}
+            </View>
+            <View
+              style={{
+                marginTop: 16,
+                flexDirection: 'row',
+                alignItems: 'center',
+              }}
+            >
+              <CustomIcon name='Star' color={theme.RATING100_COLOR} size={12} />
+              <Text
+                style={{
+                  fontFamily: theme.FONT_BOLD,
+                  fontSize: theme.FONT_SIZE_LABEL,
+                  color:
+                    colorScheme === 'light'
+                      ? theme.NEUTRAL90_COLOR
+                      : theme.NEUTRAL0_COLOR,
+                  marginRight: 7,
+                  marginLeft: 4,
+                }}
               >
-                <Image
-                  source={{ uri: data.authorPhoto }}
-                  style={{ width: 40, height: 40, borderRadius: 50 }}
-                />
-              </TouchableOpacity>
-              <View style={{ marginLeft: 10 }}>
+                4, 5
+              </Text>
+              <Text
+                style={{
+                  fontFamily: theme.FONT_REGULAR,
+                  fontSize: theme.FONT_SIZE_LABEL,
+                  color: theme.NEUTRAL40_COLOR,
+                }}
+              >
+                ( 200 reviews )
+              </Text>
+            </View>
+            <View
+              style={{
+                marginTop: 16,
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}
+            >
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                 <TouchableOpacity
                   onPress={() =>
                     navigation.navigate('Profile', {
@@ -248,207 +267,88 @@ export const RecipeDetail = ({ route, navigation }) => {
                     })
                   }
                 >
-                  <Text
-                    style={{
-                      fontSize: theme.FONT_SIZE_P,
-                      fontFamily: theme.FONT_BOLD,
-                      color: theme.NEUTRAL100_COLOR,
-                    }}
-                  >
-                    {data.authorName}
-                  </Text>
-                </TouchableOpacity>
-                <View style={{ flexDirection: 'row' }}>
-                  <CustomIcon
-                    name='Location'
-                    color={theme.PRIMARY50_COLOR}
-                    size={16}
+                  <Image
+                    source={{ uri: data.authorPhoto }}
+                    style={{ width: 40, height: 40, borderRadius: 50 }}
                   />
-                  <Text
-                    style={{
-                      fontSize: theme.FONT_SIZE_LABEL,
-                      fontFamily: theme.FONT_REGULAR,
-                      color: theme.NEUTRAL40_COLOR,
-                      marginLeft: 4,
-                    }}
+                </TouchableOpacity>
+                <View style={{ marginLeft: 10 }}>
+                  <TouchableOpacity
+                    onPress={() =>
+                      navigation.navigate('Profile', {
+                        id: data.personId,
+                      })
+                    }
                   >
-                    {data.location}
-                  </Text>
+                    <Text
+                      style={{
+                        fontSize: theme.FONT_SIZE_P,
+                        fontFamily: theme.FONT_BOLD,
+                        color:
+                          colorScheme === 'light'
+                            ? theme.NEUTRAL100_COLOR
+                            : theme.NEUTRAL0_COLOR,
+                      }}
+                    >
+                      {data.authorName}
+                    </Text>
+                  </TouchableOpacity>
+                  <View style={{ flexDirection: 'row' }}>
+                    <CustomIcon
+                      name='Location'
+                      color={theme.PRIMARY50_COLOR}
+                      size={16}
+                    />
+                    <Text
+                      style={{
+                        fontSize: theme.FONT_SIZE_LABEL,
+                        fontFamily: theme.FONT_REGULAR,
+                        color: theme.NEUTRAL40_COLOR,
+                        marginLeft: 4,
+                      }}
+                    >
+                      {data.location}
+                    </Text>
+                  </View>
                 </View>
               </View>
-            </View>
-            {userDetails.userId !== data.userId ? (
-              <TouchableOpacity
-                style={{
-                  paddingVertical: 8,
-                  paddingHorizontal: 16,
-                  backgroundColor: theme.PRIMARY50_COLOR,
-                  borderRadius: 10,
-                }}
-                onPress={() => onFollow()}
-              >
-                <Text
+              {userDetails.userId !== data.userId ? (
+                <TouchableOpacity
                   style={{
-                    fontFamily: theme.FONT_BOLD,
-                    fontSize: theme.FONT_SIZE_LABEL,
-                    color: theme.NEUTRAL0_COLOR,
-                    textAlign: 'center',
+                    paddingVertical: 8,
+                    paddingHorizontal: 16,
+                    backgroundColor: theme.PRIMARY50_COLOR,
+                    borderRadius: 10,
                   }}
+                  onPress={() => onFollow()}
                 >
-                  {following ? 'Following' : 'Follow'}
-                </Text>
-              </TouchableOpacity>
-            ) : (
-              <View></View>
-            )}
+                  <Text
+                    style={{
+                      fontFamily: theme.FONT_BOLD,
+                      fontSize: theme.FONT_SIZE_LABEL,
+                      color: theme.NEUTRAL0_COLOR,
+                      textAlign: 'center',
+                    }}
+                  >
+                    {following ? 'Following' : 'Follow'}
+                  </Text>
+                </TouchableOpacity>
+              ) : (
+                <View></View>
+              )}
+            </View>
           </View>
-        </View>
 
-        <View style={{ paddingHorizontal: 20, paddingVertical: 12 }}>
-          <View
-            style={{
-              marginTop: 12,
-              borderRadius: 12,
-              backgroundColor: theme.NEUTRAL10_COLOR,
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              paddingHorizontal: 16,
-              paddingVertical: 12,
-            }}
-          >
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <CustomIcon
-                name='Clock'
-                size={20}
-                color={theme.PRIMARY50_COLOR}
-                style={{
-                  padding: 8,
-                  backgroundColor: theme.NEUTRAL0_COLOR,
-                  borderRadius: 10,
-                }}
-              />
-              <Text
-                style={{
-                  fontFamily: theme.FONT_BOLD,
-                  fontSize: theme.FONT_SIZE_P,
-                  color: theme.NEUTRAL90_COLOR,
-                  marginLeft: 16,
-                }}
-              >
-                Cook time
-              </Text>
-            </View>
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <Text
-                style={{
-                  fontFamily: theme.FONT_REGULAR,
-                  fontSize: theme.FONT_SIZE_LABEL,
-                  color: theme.NEUTRAL40_COLOR,
-                  marginRight: 8,
-                }}
-              >
-                {data.cookTime}
-              </Text>
-
-              <TouchableOpacity style={{ marginLeft: 10 }}>
-                <CustomIcon
-                  name='Arrow-Right'
-                  size={24}
-                  color={theme.NEUTRAL100_COLOR}
-                />
-              </TouchableOpacity>
-            </View>
-          </View>
-          <View
-            style={{
-              marginTop: 12,
-              borderRadius: 12,
-              backgroundColor: theme.NEUTRAL10_COLOR,
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              paddingHorizontal: 16,
-              paddingVertical: 12,
-              marginBottom: 20,
-            }}
-          >
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <CustomIcon
-                name='Clock'
-                size={20}
-                color={theme.PRIMARY50_COLOR}
-                style={{
-                  padding: 8,
-                  backgroundColor: theme.NEUTRAL0_COLOR,
-                  borderRadius: 10,
-                }}
-              />
-              <Text
-                style={{
-                  fontFamily: theme.FONT_BOLD,
-                  fontSize: theme.FONT_SIZE_P,
-                  color: theme.NEUTRAL90_COLOR,
-                  marginLeft: 16,
-                }}
-              >
-                Serves
-              </Text>
-            </View>
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <Text
-                style={{
-                  fontFamily: theme.FONT_REGULAR,
-                  fontSize: theme.FONT_SIZE_LABEL,
-                  color: theme.NEUTRAL40_COLOR,
-                  marginRight: 8,
-                }}
-              >
-                {data.serves}
-              </Text>
-
-              <TouchableOpacity style={{ marginLeft: 10 }}>
-                <CustomIcon
-                  name='Arrow-Right'
-                  size={24}
-                  color={theme.NEUTRAL100_COLOR}
-                />
-              </TouchableOpacity>
-            </View>
-          </View>
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              marginBottom: 4,
-            }}
-          >
-            <Text
-              style={{
-                fontSize: theme.FONT_SIZE_H5,
-                fontFamily: theme.FONT_BOLD,
-                color: theme.NEUTRAL90_COLOR,
-              }}
-            >
-              Ingredients
-            </Text>
-            <Text
-              style={{
-                fontSize: theme.FONT_SIZE_LABEL,
-                fontFamily: theme.FONT_REGULAR,
-                color: theme.NEUTRAL40_COLOR,
-              }}
-            >
-              {data.ingredients.length} Items
-            </Text>
-          </View>
-          {data.ingredients.map((e) => (
+          <View style={{ paddingHorizontal: 20, paddingVertical: 12 }}>
             <View
               style={{
                 marginTop: 12,
                 borderRadius: 12,
-                backgroundColor: theme.NEUTRAL10_COLOR,
+                backgroundColor:
+                  colorScheme === 'light'
+                    ? theme.NEUTRAL10_COLOR
+                    : theme.NEUTRAL90_COLOR,
+
                 flexDirection: 'row',
                 justifyContent: 'space-between',
                 alignItems: 'center',
@@ -457,42 +357,208 @@ export const RecipeDetail = ({ route, navigation }) => {
               }}
             >
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <Image source={e.ingredientImage} />
+                <CustomIcon
+                  name='Clock'
+                  size={20}
+                  color={theme.PRIMARY50_COLOR}
+                  style={{
+                    padding: 8,
+                    backgroundColor:
+                      colorScheme === 'light'
+                        ? theme.NEUTRAL0_COLOR
+                        : theme.NEUTRAL100_COLOR,
+                    borderRadius: 10,
+                  }}
+                />
                 <Text
                   style={{
                     fontFamily: theme.FONT_BOLD,
                     fontSize: theme.FONT_SIZE_P,
-                    color: theme.NEUTRAL90_COLOR,
+                    color:
+                      colorScheme === 'light'
+                        ? theme.NEUTRAL90_COLOR
+                        : theme.NEUTRAL10_COLOR,
+
                     marginLeft: 16,
                   }}
                 >
-                  {e.name}
+                  Cook time
                 </Text>
               </View>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Text
+                  style={{
+                    fontFamily: theme.FONT_REGULAR,
+                    fontSize: theme.FONT_SIZE_LABEL,
+                    color: theme.NEUTRAL40_COLOR,
+                    marginRight: 8,
+                  }}
+                >
+                  {data.cookTime}
+                </Text>
+
+                <TouchableOpacity style={{ marginLeft: 10 }}>
+                  <CustomIcon
+                    name='Arrow-Right'
+                    size={24}
+                    color={theme.NEUTRAL100_COLOR}
+                  />
+                </TouchableOpacity>
+              </View>
+            </View>
+            <View
+              style={{
+                marginTop: 12,
+                borderRadius: 12,
+                backgroundColor:
+                  colorScheme === 'light'
+                    ? theme.NEUTRAL10_COLOR
+                    : theme.NEUTRAL90_COLOR,
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                paddingHorizontal: 16,
+                paddingVertical: 12,
+                marginBottom: 20,
+              }}
+            >
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <CustomIcon
+                  name='Clock'
+                  size={20}
+                  color={theme.PRIMARY50_COLOR}
+                  style={{
+                    padding: 8,
+                    backgroundColor:
+                      colorScheme === 'light'
+                        ? theme.NEUTRAL0_COLOR
+                        : theme.NEUTRAL100_COLOR,
+                    borderRadius: 10,
+                  }}
+                />
+                <Text
+                  style={{
+                    fontFamily: theme.FONT_BOLD,
+                    fontSize: theme.FONT_SIZE_P,
+                    color:
+                      colorScheme === 'light'
+                        ? theme.NEUTRAL90_COLOR
+                        : theme.NEUTRAL10_COLOR,
+                    marginLeft: 16,
+                  }}
+                >
+                  Serves
+                </Text>
+              </View>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Text
+                  style={{
+                    fontFamily: theme.FONT_REGULAR,
+                    fontSize: theme.FONT_SIZE_LABEL,
+                    color: theme.NEUTRAL40_COLOR,
+                    marginRight: 8,
+                  }}
+                >
+                  {data.serves}
+                </Text>
+
+                <TouchableOpacity style={{ marginLeft: 10 }}>
+                  <CustomIcon
+                    name='Arrow-Right'
+                    size={24}
+                    color={theme.NEUTRAL100_COLOR}
+                  />
+                </TouchableOpacity>
+              </View>
+            </View>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                marginBottom: 4,
+              }}
+            >
               <Text
                 style={{
-                  fontFamily: theme.FONT_REGULAR,
+                  fontSize: theme.FONT_SIZE_H5,
+                  fontFamily: theme.FONT_BOLD,
+                  color:
+                    colorScheme === 'light'
+                      ? theme.NEUTRAL90_COLOR
+                      : theme.NEUTRAL0_COLOR,
+                }}
+              >
+                Ingredients
+              </Text>
+              <Text
+                style={{
                   fontSize: theme.FONT_SIZE_LABEL,
+                  fontFamily: theme.FONT_REGULAR,
                   color: theme.NEUTRAL40_COLOR,
                 }}
               >
-                {e.quantity}
+                {data.ingredients.length} Items
               </Text>
             </View>
-          ))}
-        </View>
-        <BottomSheetModal
-          ref={bottomSheetModalRef}
-          index={1}
-          snapPoints={snapPoints}
-          onChange={handleSheetChanges}
-        >
-          <View style={{ flex: 1, alignItems: 'center' }}>
-            <Text>Awesome 🎉</Text>
+            {data.ingredients.map((e) => (
+              <View
+                style={{
+                  marginTop: 12,
+                  borderRadius: 12,
+                  backgroundColor:
+                    colorScheme === 'light'
+                      ? theme.NEUTRAL10_COLOR
+                      : theme.NEUTRAL90_COLOR,
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  paddingHorizontal: 16,
+                  paddingVertical: 12,
+                }}
+              >
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <Image source={e.ingredientImage} />
+                  <Text
+                    style={{
+                      fontFamily: theme.FONT_BOLD,
+                      fontSize: theme.FONT_SIZE_P,
+                      color:
+                        colorScheme === 'light'
+                          ? theme.NEUTRAL90_COLOR
+                          : theme.NEUTRAL10_COLOR,
+                      marginLeft: 16,
+                    }}
+                  >
+                    {e.name}
+                  </Text>
+                </View>
+                <Text
+                  style={{
+                    fontFamily: theme.FONT_REGULAR,
+                    fontSize: theme.FONT_SIZE_LABEL,
+                    color: theme.NEUTRAL40_COLOR,
+                  }}
+                >
+                  {e.quantity}
+                </Text>
+              </View>
+            ))}
           </View>
-        </BottomSheetModal>
-      </ScrollView>
-    </SafeAreaView>
+          <BottomSheetModal
+            ref={bottomSheetModalRef}
+            index={1}
+            snapPoints={snapPoints}
+            onChange={handleSheetChanges}
+          >
+            <View style={{ flex: 1, alignItems: 'center' }}>
+              <Text>Awesome 🎉</Text>
+            </View>
+          </BottomSheetModal>
+        </ScrollView>
+      </SafeAreaView>
+      <StatusBar style='light' />
+    </>
   );
 };
 

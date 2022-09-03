@@ -5,14 +5,16 @@ import {
   StyleSheet,
   ActivityIndicator,
 } from 'react-native';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import List from '../../components/SearchList/SearchList';
 import SearchBar from '../../components/SearchBar/SearchBar';
+import { UserContext } from '../../context/user';
 
 const Search = () => {
   const [searchPhrase, setSearchPhrase] = useState('');
   const [clicked, setClicked] = useState(false);
   const [fakeData, setFakeData] = useState();
+  const { allRecipes } = useContext(UserContext);
 
   // get data from the fake api endpoint
   useEffect(() => {
@@ -28,22 +30,24 @@ const Search = () => {
 
   return (
     <SafeAreaView style={styles.root}>
-      {!clicked && <Text style={styles.title}>Programming Languages</Text>}
-      <SearchBar
-        searchPhrase={searchPhrase}
-        setSearchPhrase={setSearchPhrase}
-        clicked={clicked}
-        setClicked={setClicked}
-      />
-      {!fakeData ? (
-        <ActivityIndicator size='large' />
-      ) : (
-        <List
+      <View style={{ backgroundColor: 'black' }}>
+        {!clicked && <Text style={styles.title}>Search Recipes</Text>}
+        <SearchBar
           searchPhrase={searchPhrase}
-          data={fakeData}
+          setSearchPhrase={setSearchPhrase}
+          clicked={clicked}
           setClicked={setClicked}
         />
-      )}
+        {!fakeData ? (
+          <ActivityIndicator size='large' />
+        ) : (
+          <List
+            searchPhrase={searchPhrase}
+            data={allRecipes}
+            setClicked={setClicked}
+          />
+        )}
+      </View>
     </SafeAreaView>
   );
 };

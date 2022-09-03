@@ -1,12 +1,13 @@
 // List.js
 import React from 'react';
 import { StyleSheet, Text, View, FlatList, SafeAreaView } from 'react-native';
+import RecentCard from '../../components/RecentCard/RecentCard';
 
 // definition of the Item, which will be rendered in the FlatList
-const Item = ({ name, details }) => (
+const Item = ({ title, authorName }) => (
   <View style={styles.item}>
-    <Text style={styles.title}>{name}</Text>
-    <Text style={styles.details}>{details}</Text>
+    <Text style={styles.title}>{title}</Text>
+    <Text style={styles.details}>{authorName}</Text>
   </View>
 );
 
@@ -15,23 +16,23 @@ const List = ({ searchPhrase, setClicked, data }) => {
   const renderItem = ({ item }) => {
     // when no input, show all
     if (searchPhrase === '') {
-      return <Item name={item.name} details={item.details} />;
+      return <RecentCard data={item} />;
     }
     // filter of the name
     if (
-      item.name
+      item.title
         .toUpperCase()
         .includes(searchPhrase.toUpperCase().trim().replace(/\s/g, ''))
     ) {
-      return <Item name={item.name} details={item.details} />;
+      return <RecentCard data={item} />;
     }
     // filter of the description
     if (
-      item.details
+      item.authorName
         .toUpperCase()
         .includes(searchPhrase.toUpperCase().trim().replace(/\s/g, ''))
     ) {
-      return <Item name={item.name} details={item.details} />;
+      return <RecentCard data={item} />;
     }
   };
 
@@ -44,6 +45,7 @@ const List = ({ searchPhrase, setClicked, data }) => {
       >
         <FlatList
           data={data}
+          numColumns={2}
           renderItem={renderItem}
           keyExtractor={(item) => item.id}
         />

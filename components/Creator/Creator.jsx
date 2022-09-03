@@ -1,4 +1,10 @@
-import { View, Text, TouchableOpacity, Image } from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+  useColorScheme,
+} from 'react-native';
 import React from 'react';
 import avatarImage from '../../assets/images/Avatar.png';
 import theme from '../../styles/theme.style';
@@ -6,6 +12,7 @@ import { useNavigation } from '@react-navigation/native';
 
 const Creator = ({ data }) => {
   const navigation = useNavigation();
+  const colorScheme = useColorScheme();
 
   return (
     <View>
@@ -22,7 +29,10 @@ const Creator = ({ data }) => {
         />
         <Text
           style={{
-            color: theme.NEUTRAL90_COLOR,
+            color:
+              colorScheme === 'light'
+                ? theme.NEUTRAL90_COLOR
+                : theme.NEUTRAL0_COLOR,
             fontSize: theme.FONT_SIZE_SMALL,
             fontFamily: theme.FONT_BOLD,
             width: '50%',

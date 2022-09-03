@@ -8,7 +8,9 @@ import {
   Image,
   FlatList,
   StyleSheet,
+  useColorScheme,
 } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
 import Animated, {
   interpolate,
   interpolateColor,
@@ -30,6 +32,8 @@ const DATA = [0, 1, 2, 3, 4];
 const identity = (v) => v + '';
 
 const Header = ({ profile, loading, onPress }) => {
+  const colorScheme = useColorScheme();
+
   let layout;
   if (loading) {
     layout = (
@@ -39,135 +43,173 @@ const Header = ({ profile, loading, onPress }) => {
     );
   } else {
     layout = (
-      <View style={{ paddingHorizontal: 20, marginTop: 30, marginBottom: 12 }}>
+      <>
         <View
           style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginBottom: 16,
+            paddingHorizontal: 20,
+            marginTop: 30,
+            backgroundColor:
+              colorScheme === 'light' ? 'white' : theme.NEUTRAL100_COLOR,
+            paddingVertical: 20,
           }}
         >
-          <Text
-            style={{
-              color: theme.NEUTRAL100_COLOR,
-              fontFamily: theme.FONT_BOLD,
-              fontSize: theme.FONT_SIZE_H4,
-            }}
-          >
-            My Profile
-          </Text>
-          <TouchableOpacity
-            style={{
-              width: 32,
-              height: 32,
-              backgroundColor: theme.NEUTRAL0_COLOR,
-              borderRadius: 32,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-            onPress={onPress}
-          >
-            <CustomIcon name='More' size={20} color={theme.NEUTRAL100_COLOR} />
-          </TouchableOpacity>
-        </View>
-        <View>
           <View
             style={{
               flexDirection: 'row',
-              alignItems: 'center',
               justifyContent: 'space-between',
+              alignItems: 'center',
+              marginBottom: 16,
             }}
           >
-            <View style={{ width: '60%' }}>
-              <Image
-                source={{ uri: profile?.profilePhotoUrl }}
-                style={{ width: 90, height: 70 }}
-              />
-              <Text
-                style={{
-                  color: theme.NEUTRAL90_COLOR,
-                  fontFamily: theme.FONT_BOLD,
-                  fontSize: theme.FONT_SIZE_H5,
-                  marginTop: 16,
-                }}
-              >
-                {profile?.name}
-              </Text>
-              <Text
-                style={{
-                  color: theme.NEUTRAL40_COLOR,
-                  fontFamily: theme.FONT_REGULAR,
-                  fontSize: theme.FONT_SIZE_LABEL,
-                  marginTop: 16,
-                }}
-              >
-                Hello world I’m {profile?.name}, I’m from {profile?.location} 🇮🇹
-                I love cooking so much!
-              </Text>
-            </View>
-            <TouchableOpacity
+            <Text
               style={{
-                paddingVertical: 8,
-                paddingHorizontal: 16,
-                backgroundColor: theme.NEUTRAL0_COLOR,
-                borderRadius: 10,
-                borderColor: theme.PRIMARY50_COLOR,
-                borderWidth: 1,
+                color:
+                  colorScheme === 'light'
+                    ? theme.NEUTRAL100_COLOR
+                    : theme.NEUTRAL0_COLOR,
+                fontFamily: theme.FONT_BOLD,
+                fontSize: theme.FONT_SIZE_H4,
               }}
             >
-              <Text
-                style={{
-                  fontFamily: theme.FONT_BOLD,
-                  fontSize: theme.FONT_SIZE_LABEL,
-                  color: theme.PRIMARY50_COLOR,
-                  textAlign: 'center',
-                }}
-              >
-                Edit Profile
-              </Text>
+              My Profile
+            </Text>
+            <TouchableOpacity
+              style={{
+                width: 32,
+                height: 32,
+                backgroundColor: theme.NEUTRAL0_COLOR,
+                borderRadius: 32,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+              onPress={onPress}
+            >
+              <CustomIcon
+                name='More'
+                size={20}
+                color={theme.NEUTRAL100_COLOR}
+              />
             </TouchableOpacity>
           </View>
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              marginTop: 20,
-            }}
-          >
-            {[
-              { name: 'Recipe', count: profile?.recipes.length },
-              { name: 'Followers', count: profile?.followers.length },
-              { name: 'Following', count: profile?.following.length },
-              { name: 'Videos', count: profile?.videos.length },
-            ].map((e) => (
-              <View>
+          <View>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}
+            >
+              <View style={{ width: '60%' }}>
+                <Image
+                  source={{ uri: profile?.profilePhotoUrl }}
+                  style={{ width: 100, height: 100, borderRadius: 50 }}
+                />
                 <Text
                   style={{
-                    fontFamily: theme.FONT_REGULAR,
-                    fontSize: theme.FONT_SIZE_SMALL,
-                    color: theme.NEUTRAL40_COLOR,
-                    textAlign: 'center',
+                    color:
+                      colorScheme === 'light'
+                        ? theme.NEUTRAL90_COLOR
+                        : theme.NEUTRAL0_COLOR,
+                    fontFamily: theme.FONT_BOLD,
+                    fontSize: theme.FONT_SIZE_H5,
+                    marginTop: 16,
                   }}
                 >
-                  {e.name}
+                  {profile?.name}
                 </Text>
+                <Text
+                  style={{
+                    color: theme.NEUTRAL40_COLOR,
+                    fontFamily: theme.FONT_REGULAR,
+                    fontSize: theme.FONT_SIZE_LABEL,
+                    marginTop: 16,
+                  }}
+                >
+                  Hello world I’m {profile?.name}, I’m from {profile?.location}{' '}
+                  🇮🇹 I love cooking so much!
+                </Text>
+              </View>
+              <TouchableOpacity
+                style={{
+                  paddingVertical: 8,
+                  paddingHorizontal: 16,
+                  backgroundColor:
+                    colorScheme === 'light'
+                      ? theme.NEUTRAL100_COLOR
+                      : theme.PRIMARY50_COLOR,
+                  borderRadius: 10,
+                  borderColor: theme.PRIMARY50_COLOR,
+                  borderWidth: 1,
+                }}
+              >
                 <Text
                   style={{
                     fontFamily: theme.FONT_BOLD,
-                    fontSize: theme.FONT_SIZE_H5,
-                    color: theme.NEUTRAL90_COLOR,
+                    fontSize: theme.FONT_SIZE_LABEL,
+                    color:
+                      colorScheme === 'light'
+                        ? theme.NEUTRAL100_COLOR
+                        : theme.NEUTRAL0_COLOR,
                     textAlign: 'center',
                   }}
                 >
-                  {e.count}
+                  Edit Profile
                 </Text>
-              </View>
-            ))}
+              </TouchableOpacity>
+            </View>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                marginTop: 20,
+              }}
+            >
+              {[
+                { name: 'Recipe', count: profile?.recipes.length },
+                { name: 'Followers', count: profile?.followers.length },
+                { name: 'Following', count: profile?.following.length },
+                { name: 'Videos', count: profile?.videos.length },
+              ].map((e) => (
+                <View>
+                  <Text
+                    style={{
+                      fontFamily: theme.FONT_REGULAR,
+                      fontSize: theme.FONT_SIZE_SMALL,
+                      color: theme.NEUTRAL40_COLOR,
+                      textAlign: 'center',
+                    }}
+                  >
+                    {e.name}
+                  </Text>
+                  <Text
+                    style={{
+                      fontFamily: theme.FONT_BOLD,
+                      fontSize: theme.FONT_SIZE_H5,
+                      color:
+                        colorScheme === 'light'
+                          ? theme.NEUTRAL90_COLOR
+                          : theme.NEUTRAL0_COLOR,
+                      textAlign: 'center',
+                    }}
+                  >
+                    {e.count}
+                  </Text>
+                </View>
+              ))}
+            </View>
           </View>
         </View>
-      </View>
+        <View
+          style={{
+            backgroundColor:
+              colorScheme === 'light'
+                ? theme.NEUTRAL100_COLOR
+                : theme.NEUTRAL0_COLOR,
+            height: 1,
+          }}
+        ></View>
+      </>
     );
   }
   return layout;
@@ -181,6 +223,8 @@ function MyTabBar2({
   onPress,
   onLongPress,
 }) {
+  const colorScheme = useColorScheme();
+
   return (
     <View
       style={{
@@ -188,6 +232,10 @@ function MyTabBar2({
         flexDirection: 'row',
         paddingVertical: 10,
         paddingHorizontal: 10,
+        backgroundColor:
+          colorScheme === 'light'
+            ? theme.NEUTRAL0_COLOR
+            : theme.NEUTRAL100_COLOR,
       }}
     >
       {tabNames.map((route, index) => {
@@ -239,11 +287,18 @@ function MyTabBar2({
             //     ),
             //   },
             // ],
-            color: interpolateColor(
-              indexDecimal.value,
-              [index - 1, index, index + 1],
-              ['#e23e3e', 'white', '#e23e3e']
-            ),
+            color:
+              colorScheme !== 'light'
+                ? interpolateColor(
+                    indexDecimal.value,
+                    [index - 1, index, index + 1],
+                    ['#e23e3e', 'white', '#e23e3e']
+                  )
+                : interpolateColor(
+                    indexDecimal.value,
+                    [index - 1, index, index + 1],
+                    ['white', '#e23e3e', 'white']
+                  ),
             backgroundColor:
               Math.abs(index - indexDecimal.value) < 0.5
                 ? '#e23e3e'
@@ -272,6 +327,8 @@ function MyTabBar2({
 }
 
 const Example = React.forwardRef(({ emptyContacts, ...props }, ref) => {
+  const colorScheme = useColorScheme();
+
   // ref
   const bottomSheetModalRef = useRef(null);
 
@@ -336,7 +393,11 @@ const Example = React.forwardRef(({ emptyContacts, ...props }, ref) => {
               style={{
                 paddingHorizontal: 20,
                 marginTop: 20,
-                marginBottom: 110,
+                marginBottom: 20,
+                backgroundColor:
+                  colorScheme === 'light'
+                    ? theme.NEUTRAL0_COLOR
+                    : theme.NEUTRAL100_COLOR,
               }}
             />
           </Tabs.Tab>
@@ -349,7 +410,15 @@ const Example = React.forwardRef(({ emptyContacts, ...props }, ref) => {
               data={recipes.filter((e) => e.type === 'recipe')}
               renderItem={renderItem1}
               keyExtractor={identity}
-              style={{ paddingHorizontal: 20, marginTop: 20, marginBottom: 20 }}
+              style={{
+                paddingHorizontal: 20,
+                marginTop: 20,
+                marginBottom: 20,
+                backgroundColor:
+                  colorScheme === 'light'
+                    ? theme.NEUTRAL0_COLOR
+                    : theme.NEUTRAL100_COLOR,
+              }}
             />
           </Tabs.Tab>
         </Tabs.Container>
@@ -381,6 +450,7 @@ const Example = React.forwardRef(({ emptyContacts, ...props }, ref) => {
             </View>
           </View>
         </BottomSheetModal>
+        <StatusBar style='dark' />
       </>
     );
   }

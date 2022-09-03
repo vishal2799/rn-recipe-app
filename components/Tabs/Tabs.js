@@ -1,4 +1,10 @@
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  useColorScheme,
+} from 'react-native';
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import CustomIcon from '../CustomIcon/CustomIcon';
@@ -6,9 +12,10 @@ import theme from '../../styles/theme.style';
 import HomeScreen from '../../screens/Home/Home';
 import CreateScreen from '../../screens/Create/Create';
 import SavedScreen from '../../screens/Saved/Saved';
-import ProfileScreen from '../../screens/Profile/Profile3';
+import ProfileScreen from '../../screens/Profile/Profile';
 import NotificationScreen from '../../screens/Notification/Notification';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { UserContext } from '../../context/user';
 
 const Tab = createBottomTabNavigator();
 
@@ -36,6 +43,9 @@ const CustomTabBarButton = ({ children, onPress }) => (
 );
 
 function Tabs() {
+  const { userDetails } = React.useContext(UserContext);
+  const colorScheme = useColorScheme();
+
   return (
     <SafeAreaProvider>
       <Tab.Navigator
@@ -45,7 +55,10 @@ function Tabs() {
           tabBarStyle: {
             position: 'absolute',
             elevation: 0,
-            backgroundColor: '#ffffff',
+            backgroundColor:
+              colorScheme === 'light'
+                ? theme.NEUTRAL0_COLOR
+                : theme.NEUTRAL90_COLOR,
             height: 85,
             //   ...style.shadow,
           },
@@ -65,7 +78,11 @@ function Tabs() {
                 <CustomIcon
                   name='HomeActive'
                   color={
-                    focused ? theme.PRIMARY50_COLOR : theme.NEUTRAL30_COLOR
+                    focused
+                      ? theme.PRIMARY50_COLOR
+                      : colorScheme === 'light'
+                      ? theme.NEUTRAL30_COLOR
+                      : theme.NEUTRAL0_COLOR
                   }
                   size={24}
                 />
@@ -87,7 +104,11 @@ function Tabs() {
                 <CustomIcon
                   name='BookmarkActive'
                   color={
-                    focused ? theme.PRIMARY50_COLOR : theme.NEUTRAL30_COLOR
+                    focused
+                      ? theme.PRIMARY50_COLOR
+                      : colorScheme === 'light'
+                      ? theme.NEUTRAL30_COLOR
+                      : theme.NEUTRAL0_COLOR
                   }
                   size={24}
                 />
@@ -119,7 +140,11 @@ function Tabs() {
                 <CustomIcon
                   name='NotificationActive'
                   color={
-                    focused ? theme.PRIMARY50_COLOR : theme.NEUTRAL30_COLOR
+                    focused
+                      ? theme.PRIMARY50_COLOR
+                      : colorScheme === 'light'
+                      ? theme.NEUTRAL30_COLOR
+                      : theme.NEUTRAL0_COLOR
                   }
                   size={24}
                 />
@@ -130,6 +155,7 @@ function Tabs() {
         <Tab.Screen
           name='Profile'
           component={ProfileScreen}
+          initialParams={{ id: userDetails.userId }}
           options={{
             tabBarIcon: ({ focused }) => (
               <View
@@ -141,7 +167,11 @@ function Tabs() {
                 <CustomIcon
                   name='ProfileActive'
                   color={
-                    focused ? theme.PRIMARY50_COLOR : theme.NEUTRAL30_COLOR
+                    focused
+                      ? theme.PRIMARY50_COLOR
+                      : colorScheme === 'light'
+                      ? theme.NEUTRAL30_COLOR
+                      : theme.NEUTRAL0_COLOR
                   }
                   size={24}
                 />

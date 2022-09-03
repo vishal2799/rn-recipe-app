@@ -1,6 +1,12 @@
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import React from 'react';
-import { View, Text, SafeAreaView, FlatList } from 'react-native';
+import {
+  View,
+  Text,
+  SafeAreaView,
+  FlatList,
+  useColorScheme,
+} from 'react-native';
 import theme from '../../styles/theme.style';
 import VideoRecipe from '../../components/VideoRecipe/VideoRecipe';
 import ImageRecipe from '../../components/ImageRecipe/ImageRecipe';
@@ -45,6 +51,7 @@ function Recipe({ data }) {
 
 function Saved() {
   const { isLoading, recipes, userDetails } = React.useContext(UserContext);
+  const colorScheme = useColorScheme();
 
   let layout;
 
@@ -60,13 +67,18 @@ function Saved() {
         <SafeAreaView
           style={{
             flex: 1,
-            backgroundColor: 'white',
+            backgroundColor:
+              colorScheme === 'light' ? 'white' : theme.NEUTRAL100_COLOR,
           }}
         >
           <View style={{ marginTop: 30 }}>
             <Text
               style={{
-                color: theme.NEUTRAL100_COLOR,
+                color:
+                  colorScheme === 'light'
+                    ? theme.NEUTRAL100_COLOR
+                    : theme.NEUTRAL0_COLOR,
+
                 fontFamily: theme.FONT_BOLD,
                 fontSize: theme.FONT_SIZE_H4,
                 paddingHorizontal: 22,
@@ -82,7 +94,12 @@ function Saved() {
             screenOptions={{
               tabBarScrollEnabled: true,
             }}
-            sceneContainerStyle={{ backgroundColor: 'white' }}
+            sceneContainerStyle={{
+              backgroundColor:
+                colorScheme === 'light'
+                  ? theme.NEUTRAL0_COLOR
+                  : theme.NEUTRAL100_COLOR,
+            }}
           >
             <Tab.Screen name='Video' component={Video} />
             <Tab.Screen name='Recipe' component={Recipe} />

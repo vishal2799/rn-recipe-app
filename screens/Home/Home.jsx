@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   FlatList,
   Image,
+  useColorScheme,
 } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -21,10 +22,12 @@ import Creator from '../../components/Creator/Creator';
 import { getAuth, signOut } from 'firebase/auth';
 import { auth } from '../../config/Firebase/firebaseConfig';
 import { UserContext } from '../../context/user';
+import { StatusBar } from 'expo-status-bar';
 
 const Home = ({ navigation }) => {
   const { isLoading, creators, categoriesList, allRecipes } =
     React.useContext(UserContext);
+  const colorScheme = useColorScheme();
 
   const [category, setCategory] = useState('All');
   const [dataList, setDataList] = useState(allRecipes);
@@ -76,195 +79,264 @@ const Home = ({ navigation }) => {
     );
   } else {
     layout = (
-      <SafeAreaView
-        style={{
-          flex: 1,
-          backgroundColor: 'green',
-        }}
-      >
-        <ScrollView style={{ backgroundColor: 'white' }}>
-          <View style={styles.HeadingContainer}>
-            <Text style={styles.Heading}>Find best recipes for cooking</Text>
-          </View>
-          <View style={styles.SearchContainer}>
-            <TouchableOpacity onPress={() => navigation.navigate('Search')}>
-              <View style={styles.SearchFieldContainer}>
-                <CustomIcon
-                  name='Search'
-                  size={20}
-                  color={theme.NEUTRAL20_COLOR}
-                />
-                {/* <TextInput
+      <>
+        <SafeAreaView
+          style={{
+            flex: 1,
+            backgroundColor:
+              colorScheme === 'light' ? 'white' : theme.NEUTRAL100_COLOR,
+          }}
+        >
+          <ScrollView
+            style={{
+              backgroundColor:
+                colorScheme === 'light' ? 'white' : theme.NEUTRAL100_COLOR,
+            }}
+          >
+            <View style={styles.HeadingContainer}>
+              <Text
+                style={[
+                  styles.Heading,
+                  {
+                    color:
+                      colorScheme === 'light'
+                        ? theme.NEUTRAL90_COLOR
+                        : theme.NEUTRAL0_COLOR,
+                  },
+                ]}
+              >
+                Find best recipes for cooking
+              </Text>
+            </View>
+            <View style={styles.SearchContainer}>
+              <TouchableOpacity onPress={() => navigation.navigate('Search')}>
+                <View style={styles.SearchFieldContainer}>
+                  <CustomIcon
+                    name='Search'
+                    size={20}
+                    color={theme.NEUTRAL20_COLOR}
+                  />
+                  {/* <TextInput
                   onChangeText={onChangeText}
                   value=''
                   placeholder='Search recipes'
                   style={styles.SearchField}
                   disabled={true}
                 /> */}
-                <Text style={styles.SearchField}>Search</Text>
-              </View>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.TrendingContainer}>
-            <View style={styles.TrendingTop}>
-              <Text style={styles.CategoryTitle}>Trending</Text>
-              <TouchableOpacity
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'flex-start',
-                }}
-              >
-                <Text
-                  style={{
-                    color: theme.PRIMARY50_COLOR,
-                    fontSize: theme.FONT_SIZE_LABEL,
-                    fontFamily: theme.FONT_BOLD,
-                    marginRight: 4,
-                  }}
-                >
-                  See All
-                </Text>
-                <CustomIcon
-                  name='Arrow-Right'
-                  size={20}
-                  color={theme.PRIMARY50_COLOR}
-                />
+                  <Text style={styles.SearchField}>Search</Text>
+                </View>
               </TouchableOpacity>
             </View>
-            <View>
-              <FlatList
-                data={allRecipes}
-                renderItem={renderItem}
-                keyExtractor={(item) => item.id}
-                horizontal={true}
-                style={{ marginLeft: 20 }}
-              />
-            </View>
-          </View>
-          <View style={[styles.TrendingContainer]}>
-            <View style={styles.TrendingTop}>
-              <Text style={styles.CategoryTitle}>Popular Categories</Text>
-            </View>
-            <View style={{ paddingHorizontal: 20 }}>
-              <ScrollView
-                style={styles.listTab}
-                horizontal={true}
-                nestedScrollEnabled={true}
-              >
-                {categoriesList.map((e) => (
-                  <TouchableOpacity
-                    style={[
-                      styles.btnTab,
-                      category == e.name && styles.btnTabActive,
-                    ]}
-                    onPress={() => setCategoryFilter(e.name)}
+            <View style={styles.TrendingContainer}>
+              <View style={styles.TrendingTop}>
+                <Text
+                  style={[
+                    styles.CategoryTitle,
+                    {
+                      color:
+                        colorScheme === 'light'
+                          ? theme.NEUTRAL90_COLOR
+                          : theme.NEUTRAL0_COLOR,
+                    },
+                  ]}
+                >
+                  Trending
+                </Text>
+                <TouchableOpacity
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'flex-start',
+                  }}
+                >
+                  <Text
+                    style={{
+                      color: theme.PRIMARY50_COLOR,
+                      fontSize: theme.FONT_SIZE_LABEL,
+                      fontFamily: theme.FONT_BOLD,
+                      marginRight: 4,
+                    }}
                   >
-                    <Text
-                      style={[
-                        styles.textTab,
-                        category == e.name && styles.textTabActive,
-                      ]}
-                    >
-                      {e.name}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-              </ScrollView>
+                    See All
+                  </Text>
+                  <CustomIcon
+                    name='Arrow-Right'
+                    size={20}
+                    color={theme.PRIMARY50_COLOR}
+                  />
+                </TouchableOpacity>
+              </View>
+              <View>
+                <FlatList
+                  data={allRecipes}
+                  renderItem={renderItem}
+                  keyExtractor={(item) => item.id}
+                  horizontal={true}
+                  style={{ marginLeft: 20 }}
+                />
+              </View>
             </View>
-            <View>
-              <FlatList
-                style={{ marginLeft: 20, marginBottom: 12 }}
-                data={dataList}
-                horizontal={true}
-                keyExtractor={(e, i) => i.toString()}
-                renderItem={renderItem3}
-                ItemSeparatorComponent={separator}
-              />
-              {/* <FlatList
+            <View style={[styles.TrendingContainer]}>
+              <View style={styles.TrendingTop}>
+                <Text
+                  style={[
+                    styles.CategoryTitle,
+                    {
+                      color:
+                        colorScheme === 'light'
+                          ? theme.NEUTRAL90_COLOR
+                          : theme.NEUTRAL0_COLOR,
+                    },
+                  ]}
+                >
+                  Popular Categories
+                </Text>
+              </View>
+              <View style={{ paddingHorizontal: 20 }}>
+                <ScrollView
+                  style={styles.listTab}
+                  horizontal={true}
+                  nestedScrollEnabled={true}
+                >
+                  {categoriesList.map((e) => (
+                    <TouchableOpacity
+                      style={[
+                        styles.btnTab,
+                        category == e.name && styles.btnTabActive,
+                      ]}
+                      onPress={() => setCategoryFilter(e.name)}
+                    >
+                      <Text
+                        style={[
+                          styles.textTab,
+                          category == e.name && styles.textTabActive,
+                        ]}
+                      >
+                        {e.name}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+                </ScrollView>
+              </View>
+              <View>
+                <FlatList
+                  style={{ marginLeft: 20, marginBottom: 12 }}
+                  data={dataList}
+                  horizontal={true}
+                  keyExtractor={(e, i) => i.toString()}
+                  renderItem={renderItem3}
+                  ItemSeparatorComponent={separator}
+                />
+                {/* <FlatList
                 data={TrendingData}
                 renderItem={renderItem3}
                 keyExtractor={(item) => item.id}
                 horizontal={true}
                 style={{ marginLeft: 20 }}
               /> */}
+              </View>
             </View>
-          </View>
-          <View style={[styles.TrendingContainer]}>
-            <View style={styles.TrendingTop}>
-              <Text style={styles.CategoryTitle}>Recent Recipe</Text>
-              <TouchableOpacity
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'flex-start',
-                }}
-              >
+            <View style={[styles.TrendingContainer]}>
+              <View style={styles.TrendingTop}>
                 <Text
+                  style={[
+                    styles.CategoryTitle,
+                    {
+                      color:
+                        colorScheme === 'light'
+                          ? theme.NEUTRAL90_COLOR
+                          : theme.NEUTRAL0_COLOR,
+                    },
+                  ]}
+                >
+                  Recent Recipe
+                </Text>
+                <TouchableOpacity
                   style={{
-                    color: theme.PRIMARY50_COLOR,
-                    fontSize: theme.FONT_SIZE_LABEL,
-                    fontFamily: theme.FONT_BOLD,
-                    marginRight: 4,
+                    flexDirection: 'row',
+                    alignItems: 'flex-start',
                   }}
                 >
-                  See All
-                </Text>
-                <CustomIcon
-                  name='Arrow-Right'
-                  size={20}
-                  color={theme.PRIMARY50_COLOR}
+                  <Text
+                    style={{
+                      color: theme.PRIMARY50_COLOR,
+                      fontSize: theme.FONT_SIZE_LABEL,
+                      fontFamily: theme.FONT_BOLD,
+                      marginRight: 4,
+                    }}
+                  >
+                    See All
+                  </Text>
+                  <CustomIcon
+                    name='Arrow-Right'
+                    size={20}
+                    color={theme.PRIMARY50_COLOR}
+                  />
+                </TouchableOpacity>
+              </View>
+              <View>
+                <FlatList
+                  data={allRecipes}
+                  renderItem={renderRecentItem}
+                  keyExtractor={(item) => item.id}
+                  horizontal={true}
+                  style={{ marginLeft: 20 }}
                 />
-              </TouchableOpacity>
+              </View>
             </View>
-            <View>
-              <FlatList
-                data={allRecipes}
-                renderItem={renderRecentItem}
-                keyExtractor={(item) => item.id}
-                horizontal={true}
-                style={{ marginLeft: 20 }}
-              />
-            </View>
-          </View>
-          <View style={[styles.TrendingContainer, { marginBottom: 120 }]}>
-            <View style={[styles.TrendingTop, { marginTop: 15 }]}>
-              <Text style={styles.CategoryTitle}>Popular Creators</Text>
-              <TouchableOpacity
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'flex-start',
-                }}
-              >
+            <View style={[styles.TrendingContainer, { marginBottom: 120 }]}>
+              <View style={[styles.TrendingTop, { marginTop: 15 }]}>
                 <Text
+                  style={[
+                    styles.CategoryTitle,
+                    {
+                      color:
+                        colorScheme === 'light'
+                          ? theme.NEUTRAL90_COLOR
+                          : theme.NEUTRAL0_COLOR,
+                    },
+                  ]}
+                >
+                  Popular Creators
+                </Text>
+                <TouchableOpacity
                   style={{
-                    color: theme.PRIMARY50_COLOR,
-                    fontSize: theme.FONT_SIZE_LABEL,
-                    fontFamily: theme.FONT_BOLD,
-                    marginRight: 4,
+                    flexDirection: 'row',
+                    alignItems: 'flex-start',
                   }}
                 >
-                  See All
-                </Text>
-                <CustomIcon
-                  name='Arrow-Right'
-                  size={20}
-                  color={theme.PRIMARY50_COLOR}
-                />
-              </TouchableOpacity>
+                  <Text
+                    style={{
+                      color: theme.PRIMARY50_COLOR,
+                      fontSize: theme.FONT_SIZE_LABEL,
+                      fontFamily: theme.FONT_BOLD,
+                      marginRight: 4,
+                    }}
+                  >
+                    See All
+                  </Text>
+                  <CustomIcon
+                    name='Arrow-Right'
+                    size={20}
+                    color={theme.PRIMARY50_COLOR}
+                  />
+                </TouchableOpacity>
+              </View>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-around',
+                  paddingHorizontal: 10,
+                }}
+              >
+                {creators.map((e) => (
+                  <Creator data={e} />
+                ))}
+              </View>
             </View>
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-around',
-                paddingHorizontal: 10,
-              }}
-            >
-              {creators.map((e) => (
-                <Creator data={e} />
-              ))}
-            </View>
-          </View>
-        </ScrollView>
-      </SafeAreaView>
+          </ScrollView>
+        </SafeAreaView>
+        <StatusBar style='light' />
+      </>
     );
   }
   return layout;

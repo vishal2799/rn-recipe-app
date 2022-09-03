@@ -1,4 +1,11 @@
-import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  TouchableOpacity,
+  useColorScheme,
+} from 'react-native';
 import React, { useEffect } from 'react';
 import theme from '../../styles/theme.style';
 import CustomIcon from '../CustomIcon/CustomIcon';
@@ -9,6 +16,8 @@ import { db } from '../../config/Firebase/firebaseConfig';
 import { doc, arrayUnion, updateDoc, arrayRemove } from 'firebase/firestore';
 
 const VideoRecipe = ({ data, width, mr }) => {
+  const colorScheme = useColorScheme();
+
   const navigation = useNavigation();
 
   const { userDetails, setUserDetails, savedRecipes, setSavedRecipes } =
@@ -208,7 +217,10 @@ const VideoRecipe = ({ data, width, mr }) => {
         >
           <Text
             style={{
-              color: theme.NEUTRAL90_COLOR,
+              color:
+                colorScheme === 'light'
+                  ? theme.NEUTRAL90_COLOR
+                  : theme.NEUTRAL0_COLOR,
               fontSize: theme.FONT_SIZE_P,
               fontFamily: theme.FONT_BOLD,
             }}
@@ -217,7 +229,15 @@ const VideoRecipe = ({ data, width, mr }) => {
           </Text>
         </TouchableOpacity>
         <TouchableOpacity>
-          <CustomIcon name='More' size={20} color={theme.NEUTRAL90_COLOR} />
+          <CustomIcon
+            name='More'
+            size={20}
+            color={
+              colorScheme === 'light'
+                ? theme.NEUTRAL90_COLOR
+                : theme.NEUTRAL10_COLOR
+            }
+          />
         </TouchableOpacity>
       </View>
       <View
@@ -231,7 +251,7 @@ const VideoRecipe = ({ data, width, mr }) => {
         <TouchableOpacity
           onPress={() =>
             navigation.navigate('Profile', {
-              id: data.authorId,
+              id: data.userId,
             })
           }
         >
@@ -243,7 +263,7 @@ const VideoRecipe = ({ data, width, mr }) => {
         <TouchableOpacity
           onPress={() =>
             navigation.navigate('Profile', {
-              id: data.authorId,
+              id: data.userId,
             })
           }
         >

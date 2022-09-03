@@ -1,4 +1,10 @@
-import { View, Text, Image, TouchableOpacity } from 'react-native';
+import {
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  useColorScheme,
+} from 'react-native';
 import React from 'react';
 import theme from '../../styles/theme.style';
 import CustomIcon from '../CustomIcon/CustomIcon';
@@ -6,6 +12,8 @@ import { useNavigation } from '@react-navigation/native';
 import { UserContext } from '../../context/user';
 
 const PopularCard = ({ data }) => {
+  const colorScheme = useColorScheme();
+
   const navigation = useNavigation();
   const { userDetails } = React.useContext(UserContext);
 
@@ -39,7 +47,10 @@ const PopularCard = ({ data }) => {
       <View
         style={{
           position: 'relative',
-          backgroundColor: theme.NEUTRAL10_COLOR,
+          backgroundColor:
+            colorScheme === 'light'
+              ? theme.NEUTRAL10_COLOR
+              : theme.NEUTRAL90_COLOR,
           width: 150,
           height: 176,
           zIndex: 1,
@@ -70,7 +81,10 @@ const PopularCard = ({ data }) => {
               style={{
                 fontFamily: theme.FONT_BOLD,
                 fontSize: theme.FONT_SIZE_LABEL,
-                color: theme.NEUTRAL90_COLOR,
+                color:
+                  colorScheme === 'light'
+                    ? theme.NEUTRAL90_COLOR
+                    : theme.NEUTRAL0_COLOR,
                 textAlign: 'center',
                 paddingHorizontal: 8,
               }}
@@ -93,7 +107,10 @@ const PopularCard = ({ data }) => {
             style={{
               fontFamily: theme.FONT_BOLD,
               fontSize: theme.FONT_SIZE_SMALL,
-              color: theme.NEUTRAL90_COLOR,
+              color:
+                colorScheme === 'light'
+                  ? theme.NEUTRAL90_COLOR
+                  : theme.NEUTRAL0_COLOR,
             }}
           >
             {data.cookTime} MINS
