@@ -37,7 +37,8 @@ function UserProvider({ children }) {
 
     if (docSnap.exists()) {
       setUserDetails({ userId: docSnap.id, ...docSnap.data() });
-      fetchSavedRecipes(docSnap.data().saved);
+      const user = docSnap.data();
+      fetchSavedRecipes(user.saved);
     } else {
       // doc.data() will be undefined in this case
       console.log('No such document!');
@@ -83,12 +84,9 @@ function UserProvider({ children }) {
     setRecipes(newRecipes);
   }
 
-  async function fetchSavedRecipes() {
-    if (userDetails.saved.length > 0) {
-      const q = query(
-        collection(db, 'recipes'),
-        where('id', 'in', userDetails?.saved)
-      );
+  async function fetchSavedRecipes(saved) {
+    if (saved) {
+      const q = query(collection(db, 'recipes'), where('id', 'in', saved));
       const docSnap = await getDocs(q);
       const newRecipes = [];
       docSnap.forEach((doc) => {

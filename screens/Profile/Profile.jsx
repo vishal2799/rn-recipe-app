@@ -54,7 +54,7 @@ const Header = ({ profile, loading, onPress, same, reset }) => {
         <View
           style={{
             paddingHorizontal: 20,
-            marginTop: 30,
+            marginTop: 40,
             backgroundColor:
               colorScheme === 'light' ? 'white' : theme.NEUTRAL100_COLOR,
             paddingVertical: 20,
@@ -143,7 +143,7 @@ const Header = ({ profile, loading, onPress, same, reset }) => {
                   paddingHorizontal: 16,
                   backgroundColor:
                     colorScheme === 'light'
-                      ? theme.NEUTRAL100_COLOR
+                      ? theme.PRIMARY50_COLOR
                       : theme.PRIMARY50_COLOR,
                   borderRadius: 10,
                   borderColor: theme.PRIMARY50_COLOR,
@@ -157,7 +157,7 @@ const Header = ({ profile, loading, onPress, same, reset }) => {
                     fontSize: theme.FONT_SIZE_LABEL,
                     color:
                       colorScheme === 'light'
-                        ? theme.NEUTRAL100_COLOR
+                        ? theme.NEUTRAL0_COLOR
                         : theme.NEUTRAL0_COLOR,
                     textAlign: 'center',
                   }}
@@ -250,7 +250,7 @@ function MyTabBar2({
         const textStyle = useAnimatedStyle(() => {
           return {
             color:
-              colorScheme !== 'light'
+              colorScheme === 'light'
                 ? interpolateColor(
                     indexDecimal.value,
                     [index - 1, index, index + 1],
@@ -259,7 +259,7 @@ function MyTabBar2({
                 : interpolateColor(
                     indexDecimal.value,
                     [index - 1, index, index + 1],
-                    ['white', '#e23e3e', 'white']
+                    ['#e23e3e', 'white', '#e23e3e']
                   ),
             backgroundColor:
               Math.abs(index - indexDecimal.value) < 0.5

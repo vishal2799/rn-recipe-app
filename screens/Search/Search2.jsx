@@ -1,5 +1,5 @@
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -12,6 +12,8 @@ import VideoRecipe from '../../components/VideoRecipe/VideoRecipe';
 import ImageRecipe from '../../components/ImageRecipe/ImageRecipe';
 import MyTabBar from '../../components/TabBar/TabBar';
 import { UserContext } from '../../context/user';
+import SearchBar from '../../components/SearchBar/SearchBar';
+import List from '../../components/SearchList/SearchList';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -49,8 +51,22 @@ function Recipe({ data }) {
 }
 
 function Saved() {
-  const { isLoading, recipes, userDetails } = React.useContext(UserContext);
+  const [searchPhrase, setSearchPhrase] = useState('');
+  const [clicked, setClicked] = useState(false);
+  const [fakeData, setFakeData] = useState();
+  const { isLoading, recipes, userDetails, allRecipes } =
+    React.useContext(UserContext);
   const colorScheme = useColorScheme();
+
+  function list2() {
+    return (
+      <List
+        searchPhrase={searchPhrase}
+        data={allRecipes}
+        setClicked={setClicked}
+      />
+    );
+  }
 
   let layout;
 
@@ -88,6 +104,17 @@ function Saved() {
               Saved Recipes
             </Text>
           </View>
+
+          <View style={{ backgroundColor: 'black' }}>
+            {!clicked && <Text>Search Recipes</Text>}
+            <SearchBar
+              searchPhrase={searchPhrase}
+              setSearchPhrase={setSearchPhrase}
+              clicked={clicked}
+              setClicked={setClicked}
+            />
+          </View>
+
           <Tab.Navigator
             tabBar={(props) => <MyTabBar {...props} />}
             screenOptions={{
@@ -100,7 +127,7 @@ function Saved() {
                   : theme.NEUTRAL100_COLOR,
             }}
           >
-            <Tab.Screen name='Video' component={Video} />
+            <Tab.Screen name='User' component={list2} />
             <Tab.Screen name='Recipe' component={Recipe} />
           </Tab.Navigator>
         </SafeAreaView>

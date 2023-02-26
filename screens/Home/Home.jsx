@@ -17,10 +17,7 @@ import RecentCard from '../../components/RecentCard/RecentCard';
 import styles from '../../styles/styles';
 import VideoRecipe from '../../components/VideoRecipe/VideoRecipe';
 import PopularCard from '../../components/PopularCard/PopularCard';
-import { data, recipeData } from '../../mockData';
 import Creator from '../../components/Creator/Creator';
-import { getAuth, signOut } from 'firebase/auth';
-import { auth } from '../../config/Firebase/firebaseConfig';
 import { UserContext } from '../../context/user';
 import { StatusBar } from 'expo-status-bar';
 

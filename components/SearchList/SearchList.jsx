@@ -1,7 +1,16 @@
 // List.js
 import React from 'react';
-import { StyleSheet, Text, View, FlatList, SafeAreaView } from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  FlatList,
+  SafeAreaView,
+  Dimensions,
+} from 'react-native';
 import RecentCard from '../../components/RecentCard/RecentCard';
+
+const windowWidth = Dimensions.get('window').width;
 
 // definition of the Item, which will be rendered in the FlatList
 const Item = ({ title, authorName }) => (
@@ -37,15 +46,25 @@ const List = ({ searchPhrase, setClicked, data }) => {
   };
 
   return (
-    <SafeAreaView style={styles.list__container}>
+    <SafeAreaView>
       <View
         onStartShouldSetResponder={() => {
           setClicked(false);
+        }}
+        style={{
+          marginLeft: 'auto',
+          marginRight: 'auto',
+          width: '90%',
+          marginTop: 20,
         }}
       >
         <FlatList
           data={data}
           numColumns={2}
+          columnWrapperStyle={{
+            justifyContent: 'space-between',
+            marginBottom: 20,
+          }}
           renderItem={renderItem}
           keyExtractor={(item) => item.id}
         />
@@ -58,9 +77,7 @@ export default List;
 
 const styles = StyleSheet.create({
   list__container: {
-    margin: 10,
     height: '85%',
-    width: '100%',
   },
   item: {
     margin: 30,

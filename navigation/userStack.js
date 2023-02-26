@@ -4,7 +4,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import TabsScreen from '../components/Tabs/Tabs';
 import RecipeDetail from '../screens/RecipeDetail/RecipeDetail';
-import Search from '../screens/Search/Search';
+import Search from '../screens/Search/Search2';
 
 const Stack = createNativeStackNavigator();
 
