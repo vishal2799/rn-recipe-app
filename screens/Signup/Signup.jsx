@@ -132,7 +132,7 @@ function Signup({ navigation }) {
             fontSize: theme.FONT_SIZE_H5,
           }}
         >
-          Create an account
+          Create an account with us
         </Text>
         <Text
           style={{

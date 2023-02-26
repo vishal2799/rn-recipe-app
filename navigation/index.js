@@ -4,8 +4,8 @@ import UserStack from './userStack';
 import AuthStack from './authStack';
 import { UserProvider } from '../context/user';
 export default function RootNavigation() {
-  const { user } = useAuthentication();
-
+  //const { user } = useAuthentication();
+  let user = false;
   return user ? (
     <UserProvider>
       <UserStack />
